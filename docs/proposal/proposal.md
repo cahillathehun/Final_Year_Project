@@ -10,10 +10,10 @@
 |                     |                   |
 |---------------------|-------------------|
 |Project Title:       | xxxxxx            |
-|Student 1 Name:      | xxxxxx            |
-|Student 1 ID:        | xxxxxx            |
-|Student 2 Name:      | xxxxxx            |
-|Student 2 ID:        | xxxxxx            |
+|Student 1 Name:      | Liam Ó Cearbhaill |
+|Student 1 ID:        | 15384941          |
+|Student 2 Name:      | Alexander Cahill  |
+|Student 2 ID:        | 15321711          |
 |Project Supervisor:  | xxxxxx            |
 
 > Ensure that the Supervisor formally agrees to supervise your project; this is only recognised once the
@@ -42,10 +42,14 @@
 ### Background
 
 > Where did the ideas come from?
+The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS. 
+The learning that had resulted directly from working on the Ant Colony intruiged and highly interested both of us. 
+The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
 
 ### Achievements
 
 > What functions will the project provide? Who will the users be?
+The program will be a simulation using BOIDS to simulate flocking behaviours, demonstrating a form of swarm intelligence. 
 
 ### Justification
 
