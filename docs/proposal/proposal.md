@@ -35,6 +35,9 @@
 
 > Describe the general area covered by the project.
 
+This will be a JavaScript project using Websockets and WebGL graphics to create a game with the aim of flocking objects away from your world and into another players.
+The aim of this project is to create a real time multi-user environment as well as to implement a Boids algorithm.
+
     
 
 
@@ -78,7 +81,9 @@ The primary language we intend to use is Javascript. We will also be making use 
 
 > Describe the compiler, database, web server, etc., and any other software tools you plan to use.
 
-Java Socket/ServerSocket will be used for connectivity and hosting.
+Java Socket/ServerSocket/Websockets will be used for connectivity and hosting.
+
+Node.js
 
 IntelliJ IDE.
 
