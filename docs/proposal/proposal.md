@@ -42,6 +42,7 @@
 ### Background
 
 > Where did the ideas come from?
+
 The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS. 
 The learning that had resulted directly from working on the Ant Colony intruiged and highly interested both of us. 
 The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
@@ -58,6 +59,8 @@ The program will be a simulation using BOIDS to simulate flocking behaviours, de
 ### Programming language(s)
 
 > List the proposed language(s) to be used.
+
+The programming languages we intend to use.
 
 ### Programming tools / Tech stack
 
