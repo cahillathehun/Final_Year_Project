@@ -101,7 +101,7 @@ There are hardware requirements beyond these and no non-standard hardware requir
 > List the main new things (technologies, languages, tools, etc) that you will have to learn.
 
 The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us.
-
+Another learning challeneg we will encounter will be working with WebGL as neither of us have any preovious experience working with that.
 
 
 
