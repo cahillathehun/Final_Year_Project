@@ -35,9 +35,16 @@
 
 > Describe the general area covered by the project.
 
+    
+
+
 ### Outline
 
 > Outline the proposed project.
+
+Our proposed project is to make a multiplayer game where players have to chase flocks of animals from their screen to their opponent's screen using their cursor, or their finger in the case of touch screen phones/tablets.
+
+The flock behaviour will be similar to Boids in how they flock together and avoid obstacles (the cursor).
 
 ### Background
 
@@ -50,7 +57,10 @@ The pathfinding in the ant colony simulation was very basic and each ant only "t
 ### Achievements
 
 > What functions will the project provide? Who will the users be?
-The program will be a simulation using BOIDS to simulate flocking behaviours, demonstrating a form of swarm intelligence. 
+
+The program will be a simulation using BOIDS to simulate flocking behaviours, demonstrating a form of swarm intelligence.
+
+This program will also be demonstrating multiple users being hosted on a single instance.
 
 ### Justification
 
@@ -60,19 +70,35 @@ The program will be a simulation using BOIDS to simulate flocking behaviours, de
 
 > List the proposed language(s) to be used.
 
-The programming languages we intend to use.
+The primary language we intend to use is Javascript. We will also be making use of external graphical libraries gotten from Three.js, an open source JavaScript library that uses WebGL.
+
+
 
 ### Programming tools / Tech stack
 
 > Describe the compiler, database, web server, etc., and any other software tools you plan to use.
 
+Java Socket/ServerSocket will be used for connectivity and hosting.
+
+IntelliJ IDE.
+
 ### Hardware
 
 > Describe any non-standard hardware components which will be required.
 
+We will be using our own machines for hosting and development, and also the lab machines in DCU for development.
+
+There are hardware requirements beyond these and no non-standard hardware requirements.
+
+
 ### Learning Challenges
 
 > List the main new things (technologies, languages, tools, etc) that you will have to learn.
+
+The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us.
+
+
+
 
 ### Breakdown of work
 
@@ -82,13 +108,14 @@ The programming languages we intend to use.
 > separate, clearly-defined tasks, and that those responsibilities substantially cover all of the work required
 > for the project.
 
-#### Student 1
 
-> *Student 1 should complete this section.*
+#### Student 1 (Liam)
 
-#### Student 2
+> *(Liam) should complete this section.*
 
-> *Student 2 should complete this section.*
+#### Student 2 (Alex)
+
+> *(Alex) should complete this section.*
 
 ## Example
 
