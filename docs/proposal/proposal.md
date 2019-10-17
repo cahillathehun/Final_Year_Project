@@ -129,6 +129,8 @@ I realise these will be worlds apart, however as neither of us have any direct e
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
+We will be undetaking the complaetion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
+
 #### Pair programming.
 As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
 as well as to ensure the workload has been spread fairly and evenly. Another upside of this is that both of us will benefit from learning together.
