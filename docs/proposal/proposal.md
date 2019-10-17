@@ -120,13 +120,18 @@ Although the writing of the Boids' algorithm will be somewhat new to us, some of
 #### Student 1 (Liam)
 
 > *(Liam) should complete this section.*
-
+>
+As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
+I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
 #### Student 2 (Alex)
 
 > *(Alex) should complete this section.*
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
+#### Pair programming.
+As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
+as well as to ensure the workload has been spread fairly and evenly. Another upside of this is that both of us will benefit from learning together.
 ## Example
 
 > Example: Here's how you can include images in markdown documents...
