@@ -73,7 +73,7 @@ This program will also be demonstrating multiple users being hosted on a single 
 
 > List the proposed language(s) to be used.
 
-The primary language we intend to use is Javascript. We will also be making use of external graphical libraries gotten from Three.js, an open source JavaScript library that uses WebGL.
+The primary languages we intend to use are Javascript for client side graphical rendering and NodeJS for communication between clients and the server. We will also be making use of external graphical libraries gotten from Three.js, an open source JavaScript library that uses WebGL.
 
 
 
@@ -120,13 +120,20 @@ Although the writing of the Boids' algorithm will be somewhat new to us, some of
 #### Student 1 (Liam)
 
 > *(Liam) should complete this section.*
-
+>
+As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
+I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
 #### Student 2 (Alex)
 
 > *(Alex) should complete this section.*
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
+We will be undetaking the complaetion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
+
+#### Pair programming.
+As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
+as well as to ensure the workload has been spread fairly and evenly. Another upside of this is that both of us will benefit from learning together.
 ## Example
 
 > Example: Here's how you can include images in markdown documents...
