@@ -73,7 +73,7 @@ This program will also be demonstrating multiple users being hosted on a single 
 
 > List the proposed language(s) to be used.
 
-The primary language we intend to use is Javascript. We will also be making use of external graphical libraries gotten from Three.js, an open source JavaScript library that uses WebGL.
+The primary languages we intend to use are Javascript for client side graphical rendering and NodeJS for communication between clients and the server. We will also be making use of external graphical libraries gotten from Three.js, an open source JavaScript library that uses WebGL.
 
 
 
