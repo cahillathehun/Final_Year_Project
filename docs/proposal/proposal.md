@@ -1,4 +1,4 @@
-# School of Computing &mdash; Year 4 Project Proposal Form
+﻿# School of Computing &mdash; Year 4 Project Proposal Form
 
 > Edit (then commit and push) this document to complete your proposal form.
 > Make use of figures / diagrams where appropriate.
@@ -100,8 +100,11 @@ There are hardware requirements beyond these and no non-standard hardware requir
 
 > List the main new things (technologies, languages, tools, etc) that you will have to learn.
 
-The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us.
-Another learning challeneg we will encounter will be working with WebGL as neither of us have any preovious experience working with that.
+The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us. We look forward to gaining more knowledge in networking and sockets.
+
+Another new area we will encounter is the graphical aspect of the project. In our 3rd year project we had limited experience with using simple 2d graphics. With this project we will be using 3d models from external libraries, namely Three.js.
+
+Although the writing of the Boids' algorithm will be somewhat new to us, some of the skills used to write the pathfinding algorithms in our 3rd year project will be transferrable.
 
 
 
@@ -121,6 +124,8 @@ Another learning challeneg we will encounter will be working with WebGL as neith
 #### Student 2 (Alex)
 
 > *(Alex) should complete this section.*
+
+As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
 ## Example
 
