@@ -47,7 +47,9 @@ The aim of this project is to create a real time multi-user environment as well 
 
 Our proposed project is to make a multiplayer game where players have to chase flocks of animals from their screen to their opponent's screen using their cursor, or their finger in the case of touch screen phones/tablets.
 
-The flock behaviour will be similar to Boids in how they flock together and avoid obstacles (the cursor).
+There is scope in the project to also use the capabilities built into modern phones and tablets. Flocking could be controlled using the gyroscopes or accelerometers in the devices.
+
+The flock's behaviour will be implemented using Boids as they flock together and avoid obstacles (the cursor).
 
 ### Background
 
@@ -57,6 +59,7 @@ The fact that we had completed an "Ant colony simulation" had inspired us to ste
 The learning that had resulted directly from working on the Ant Colony intruiged and highly interested both of us. 
 The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
 
+We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects.
 ### Achievements
 
 > What functions will the project provide? Who will the users be?
@@ -81,11 +84,14 @@ The primary languages we intend to use are Javascript for client side graphical 
 
 > Describe the compiler, database, web server, etc., and any other software tools you plan to use.
 
-Java Socket/ServerSocket/Websockets will be used for connectivity and hosting.
+SocketIO is what we plan to use from connectivity. It is an open source library that allows real time bi-directional communication between clients and servers.
+It has a server side library for NodeJS and client side library that runs within the browser.
 
-Node.js
+This is exactly what we need for this project as we require real time communication between clients and servers.
 
-IntelliJ IDE.
+After some development we plan to most hosting from our local machines to either an Amazon EC2 instance or Digital Ocean.
+
+IntelliJ IDE is what we plan to use to do most of the development.
 
 ### Hardware
 
@@ -93,7 +99,7 @@ IntelliJ IDE.
 
 We will be using our own machines for hosting and development, and also the lab machines in DCU for development.
 
-There are hardware requirements beyond these and no non-standard hardware requirements.
+There are no hardware requirements beyond these and no non-standard hardware requirements.
 
 
 ### Learning Challenges
@@ -125,7 +131,7 @@ As I have experience working with UI from my internship (Angular) I have opted t
 I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
 #### Student 2 (Alex)
 
-> *(Alex) should complete this section.*
+> *Alex*
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
