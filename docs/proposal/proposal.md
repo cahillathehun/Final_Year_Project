@@ -125,7 +125,7 @@ As I have experience working with UI from my internship (Angular) I have opted t
 I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
 #### Student 2 (Alex)
 
-> *(Alex) should complete this section.*
+> *Alex*
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
