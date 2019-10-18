@@ -56,10 +56,11 @@ The flock's behaviour will be implemented using Boids as they flock together and
 > Where did the ideas come from?
 
 The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS. 
-The learning that had resulted directly from working on the Ant Colony intruiged and highly interested both of us. 
+The learning that had resulted directly from working on the Ant Colony intrigued and highly interested both of us. 
 The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
 
-We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects.
+We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects. We then went to other lecturers and professors in the school of computing and found one who was interested and willing to take us on.
+
 ### Achievements
 
 > What functions will the project provide? Who will the users be?
@@ -67,6 +68,9 @@ We originally found the idea to include the use of Boids in our project by looki
 The program will be a simulation using BOIDS to simulate flocking behaviours, demonstrating a form of swarm intelligence.
 
 This program will also be demonstrating multiple users being hosted on a single instance.
+
+We anticipate the main users to be other students and people who may want to demonstrate Boids algorithm we intend to make.
+
 
 ### Justification
 
@@ -89,9 +93,9 @@ It has a server side library for NodeJS and client side library that runs within
 
 This is exactly what we need for this project as we require real time communication between clients and servers.
 
-After some development we plan to most hosting from our local machines to either an Amazon EC2 instance or Digital Ocean.
+After some development we plan to move hosting from our local machines to either an Amazon EC2 instance or to Digital Ocean. Using an Amazon EC2 instance is preferable primarily because there is a free version that will has more than enough capability to handle the needs of this project.
 
-IntelliJ IDE is what we plan to use to do most of the development.
+IntelliJ IDE is what we plan to do most of the development on.
 
 ### Hardware
 
@@ -108,9 +112,9 @@ There are no hardware requirements beyond these and no non-standard hardware req
 
 The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us. We look forward to gaining more knowledge in networking and sockets.
 
-Another new area we will encounter is the graphical aspect of the project. In our 3rd year project we had limited experience with using simple 2d graphics. With this project we will be using 3d models from external libraries, namely Three.js.
+Another new area we will encounter is the graphical aspect of the project. In our 3rd year project we had limited experience simple 2d graphics using PyGame, which is very limited in complexity. With this project we will be using 3d models from external libraries, namely Three.js.
 
-Although the writing of the Boids' algorithm will be somewhat new to us, some of the skills used to write the pathfinding algorithms in our 3rd year project will be transferrable.
+Although the writing of the Boids algorithm will be somewhat new to us, some of the skills used to write the pathfinding algorithms in our 3rd year project will be transferrable.
 
 
 
