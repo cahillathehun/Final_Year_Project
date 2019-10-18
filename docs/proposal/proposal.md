@@ -36,8 +36,10 @@
 > Describe the general area covered by the project.
 
 This will be a JavaScript project using Websockets and WebGL graphics to create a game with the aim of flocking objects away from your world and into another players.
+
 The aim of this project is to create a real time multi-user environment as well as to implement a Boids algorithm.
 
+The rendering of the Boids will be done client-side on the browser using Javascript. The server will mainly deal with instances of when Boids cross over into a different territory; letting the other client know the coordinates and heading of the flock so that it knows what to render and where.
     
 
 
@@ -120,16 +122,11 @@ Although the writing of the Boids algorithm will be somewhat new to us, some of 
 
 ### Breakdown of work
 
-> Clearly identify who will undertake which parts of the project.
->
-> It must be clear from the explanation of this breakdown of work both that each student is responsible for
-> separate, clearly-defined tasks, and that those responsibilities substantially cover all of the work required
-> for the project.
 
 
 #### Student 1 (Liam)
 
-> *(Liam) should complete this section.*
+> *Liam*
 >
 As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
 I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
@@ -139,18 +136,11 @@ I realise these will be worlds apart, however as neither of us have any direct e
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
-We will be undetaking the complaetion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
+We will be undertaking the completion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
 
 #### Pair programming.
 As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
-as well as to ensure the workload has been spread fairly and evenly. Another upside of this is that both of us will benefit from learning together.
-## Example
-
-> Example: Here's how you can include images in markdown documents...
-
-<!-- Basically, just use HTML! -->
-
-<p align="center">
-  <img src="./res/cat.png" width="300px">
-</p>
-
+as well as to ensure the workload has been spread fairly and evenly.
+ One aspect we hope to work closest together on is the writing of the algorithms for the Boids.
+ 
+ The upside of this is that both of us will benefit from learning together.
