@@ -47,7 +47,9 @@ The aim of this project is to create a real time multi-user environment as well 
 
 Our proposed project is to make a multiplayer game where players have to chase flocks of animals from their screen to their opponent's screen using their cursor, or their finger in the case of touch screen phones/tablets.
 
-The flock behaviour will be similar to Boids in how they flock together and avoid obstacles (the cursor).
+There is scope in the project to also use the capabilities built into modern phones and tablets. Flocking could be controlled using the gyroscopes or accelerometers in the devices.
+
+The flock's behaviour will be implemented using Boids as they flock together and avoid obstacles (the cursor).
 
 ### Background
 
