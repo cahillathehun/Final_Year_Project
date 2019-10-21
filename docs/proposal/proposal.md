@@ -40,7 +40,7 @@ This will be a JavaScript project using Websockets and WebGL graphics to create 
 The aim of this project is to create a real time multi-user environment as well as to implement a Boids algorithm.
 
 The rendering of the Boids will be done client-side on the browser using Javascript. The server will mainly deal with instances of when Boids cross over into a different territory; letting the other client know the coordinates and heading of the flock so that it knows what to render and where.
-    
+
 
 
 ### Outline
@@ -57,8 +57,8 @@ The flock's behaviour will be implemented using Boids as they flock together and
 
 > Where did the ideas come from?
 
-The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS. 
-The learning that had resulted directly from working on the Ant Colony intrigued and highly interested both of us. 
+The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS.
+The learning that had resulted directly from working on the Ant Colony intrigued and highly interested both of us.
 The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
 
 We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects. We then went to other lecturers and professors in the school of computing and found one who was interested and willing to take us on.
@@ -77,6 +77,10 @@ We anticipate the main users to be other students and people who may want to dem
 ### Justification
 
 > Why/when/where/how will it be useful?
+
+The justification for doing this project will be mostly academic; to further our understanding of artificial intelligence/life algorithms as our previous project made use of swarm intelligence algorithms. We are also interested in the graphical aspect of this project, again building on our knowledge from last year, the challenge of using 3D graphics will help us in this area. 
+
+
 
 ### Programming language(s)
 
@@ -129,7 +133,7 @@ Although the writing of the Boids algorithm will be somewhat new to us, some of 
 > *Liam*
 >
 As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
-I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
+I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it.
 #### Student 2 (Alex)
 
 > *Alex*
@@ -142,5 +146,5 @@ We will be undertaking the completion of the documentation for the project toget
 As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
 as well as to ensure the workload has been spread fairly and evenly.
  One aspect we hope to work closest together on is the writing of the algorithms for the Boids.
- 
+
  The upside of this is that both of us will benefit from learning together.
