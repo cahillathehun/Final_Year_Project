@@ -1,10 +1,5 @@
 ﻿# School of Computing &mdash; Year 4 Project Proposal Form
 
-> Edit (then commit and push) this document to complete your proposal form.
-> Make use of figures / diagrams where appropriate.
->
-> Do not rename this file.
-
 ## SECTION A
 
 |                     |                   |
@@ -16,19 +11,7 @@
 |Student 2 ID:        | 15321711          |
 |Project Supervisor:  | xxxxxx            |
 
-> Ensure that the Supervisor formally agrees to supervise your project; this is only recognised once the
-> Supervisor assigns herself/himself via the project Dashboard.
->
-> Project proposals without an assigned
-> Supervisor will not be accepted for presentation to the Approval Panel.
 
-## SECTION B
-
-> Guidance: This document is expected to be approximately 3 pages in length, but it can exceed this page limit.
-> It is also permissible to carry forward content from this proposal to your later documents (e.g. functional
-> specification) as appropriate.
->
-> Your proposal must include *at least* the following sections.
 
 
 ### Introduction
@@ -78,7 +61,7 @@ We anticipate the main users to be other students and people who may want to dem
 
 > Why/when/where/how will it be useful?
 
-The justification for doing this project will be mostly academic; to further our understanding of artificial intelligence/life algorithms as our previous project made use of swarm intelligence algorithms. We are also interested in the graphical aspect of this project, again building on our knowledge from last year, the challenge of using 3D graphics will help us in this area. 
+The justification for doing this project will be mostly academic; to further our understanding of artificial intelligence/life algorithms as our previous project made use of swarm intelligence algorithms. We are also interested in the graphical aspect of this project, again building on our knowledge from last year, the challenge of using 3D graphics will help us in this area.
 
 
 
@@ -127,13 +110,13 @@ Although the writing of the Boids algorithm will be somewhat new to us, some of 
 ### Breakdown of work
 
 
-
 #### Student 1 (Liam)
 
 > *Liam*
->
+
 As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
 I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it.
+
 #### Student 2 (Alex)
 
 > *Alex*
@@ -145,6 +128,7 @@ We will be undertaking the completion of the documentation for the project toget
 #### Pair programming.
 As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
 as well as to ensure the workload has been spread fairly and evenly.
- One aspect we hope to work closest together on is the writing of the algorithms for the Boids.
 
- The upside of this is that both of us will benefit from learning together.
+One aspect we hope to work closest together on is the writing of the algorithms for the Boids.
+
+The upside of this is that both of us will benefit from learning together.
