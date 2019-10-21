@@ -18,7 +18,7 @@
 
 > Describe the general area covered by the project.
 
-This will be a JavaScript project using Websockets and WebGL graphics to create a game with the aim of flocking objects away from your world and into another players.
+This will be a JavaScript project using Websockets and WebGL graphics to create a game with the aim of flocking objects away from your world and into another players. At the end of a timer the play with more animals on their screen loses. We plan to add more game mechanics but the project in it's simplest form will include at least this aspect.
 
 The aim of this project is to create a real time multi-user environment as well as to implement a Boids algorithm.
 
