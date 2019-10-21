@@ -36,8 +36,10 @@
 > Describe the general area covered by the project.
 
 This will be a JavaScript project using Websockets and WebGL graphics to create a game with the aim of flocking objects away from your world and into another players.
+
 The aim of this project is to create a real time multi-user environment as well as to implement a Boids algorithm.
 
+The rendering of the Boids will be done client-side on the browser using Javascript. The server will mainly deal with instances of when Boids cross over into a different territory; letting the other client know the coordinates and heading of the flock so that it knows what to render and where.
     
 
 
@@ -56,10 +58,11 @@ The flock's behaviour will be implemented using Boids as they flock together and
 > Where did the ideas come from?
 
 The fact that we had completed an "Ant colony simulation" had inspired us to steer away from simple food/enemy based pathfinding to BOIDS. 
-The learning that had resulted directly from working on the Ant Colony intruiged and highly interested both of us. 
+The learning that had resulted directly from working on the Ant Colony intrigued and highly interested both of us. 
 The pathfinding in the ant colony simulation was very basic and each ant only "thought" about it's own best interests, with BOIDS the emphasis is on large flocking behaviours.
 
-We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects.
+We originally found the idea to include the use of Boids in our project by looking at Marija Brezbadica's website, but as she will not be around in  the second semester she is unable to take on any final year projects. We then went to other lecturers and professors in the school of computing and found one who was interested and willing to take us on.
+
 ### Achievements
 
 > What functions will the project provide? Who will the users be?
@@ -67,6 +70,9 @@ We originally found the idea to include the use of Boids in our project by looki
 The program will be a simulation using BOIDS to simulate flocking behaviours, demonstrating a form of swarm intelligence.
 
 This program will also be demonstrating multiple users being hosted on a single instance.
+
+We anticipate the main users to be other students and people who may want to demonstrate Boids algorithm we intend to make.
+
 
 ### Justification
 
@@ -89,9 +95,9 @@ It has a server side library for NodeJS and client side library that runs within
 
 This is exactly what we need for this project as we require real time communication between clients and servers.
 
-After some development we plan to most hosting from our local machines to either an Amazon EC2 instance or Digital Ocean.
+After some development we plan to move hosting from our local machines to either an Amazon EC2 instance or to Digital Ocean. Using an Amazon EC2 instance is preferable primarily because there is a free version that will has more than enough capability to handle the needs of this project.
 
-IntelliJ IDE is what we plan to use to do most of the development.
+IntelliJ IDE is what we plan to do most of the development on.
 
 ### Hardware
 
@@ -108,24 +114,19 @@ There are no hardware requirements beyond these and no non-standard hardware req
 
 The main new challenge facing us is the networking aspect of the project. We have only encountered a limited amount of this before so most of what we will be undertaking in this area will be new to us. We look forward to gaining more knowledge in networking and sockets.
 
-Another new area we will encounter is the graphical aspect of the project. In our 3rd year project we had limited experience with using simple 2d graphics. With this project we will be using 3d models from external libraries, namely Three.js.
+Another new area we will encounter is the graphical aspect of the project. In our 3rd year project we had limited experience simple 2d graphics using PyGame, which is very limited in complexity. With this project we will be using 3d models from external libraries, namely Three.js.
 
-Although the writing of the Boids' algorithm will be somewhat new to us, some of the skills used to write the pathfinding algorithms in our 3rd year project will be transferrable.
+Although the writing of the Boids algorithm will be somewhat new to us, some of the skills used to write the pathfinding algorithms in our 3rd year project will be transferrable.
 
 
 
 ### Breakdown of work
 
-> Clearly identify who will undertake which parts of the project.
->
-> It must be clear from the explanation of this breakdown of work both that each student is responsible for
-> separate, clearly-defined tasks, and that those responsibilities substantially cover all of the work required
-> for the project.
 
 
 #### Student 1 (Liam)
 
-> *(Liam) should complete this section.*
+> *Liam*
 >
 As I have experience working with UI from my internship (Angular) I have opted to dive into learning and becoming comfortable with three.js.
 I realise these will be worlds apart, however as neither of us have any direct experience in this field I am happy to take responsibility for it. 
@@ -135,18 +136,11 @@ I realise these will be worlds apart, however as neither of us have any direct e
 
 As I have experience with NodeJS and Javascript, which is what we'll being using in to handle communication between the clients and server with the Socket.IO library, I will be taking most responsibility for the networking and server side work.
 
-We will be undetaking the complaetion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
+We will be undertaking the completion of the documentation for the project together, except for some parts that require architecture diagrams where one of us will have more understanding of the component than the other.
 
 #### Pair programming.
 As there are many aspects to this project which neither of us have much experience with we will be doing independent learning in our own time and a lot of pair programming where we will apply what we learned to keep each other up to speed
-as well as to ensure the workload has been spread fairly and evenly. Another upside of this is that both of us will benefit from learning together.
-## Example
-
-> Example: Here's how you can include images in markdown documents...
-
-<!-- Basically, just use HTML! -->
-
-<p align="center">
-  <img src="./res/cat.png" width="300px">
-</p>
-
+as well as to ensure the workload has been spread fairly and evenly.
+ One aspect we hope to work closest together on is the writing of the algorithms for the Boids.
+ 
+ The upside of this is that both of us will benefit from learning together.
