@@ -4,7 +4,7 @@
 
 |                     |                   |
 |---------------------|-------------------|
-|Project Title:       | xxxxxx            |
+|Project Title:       | Multi-User Boids  |
 |Student 1 Name:      | Liam Ó Cearbhaill |
 |Student 1 ID:        | 15384941          |
 |Student 2 Name:      | Alexander Cahill  |
