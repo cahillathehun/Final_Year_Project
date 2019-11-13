@@ -1,5 +1,5 @@
 
 var socket = io();
-socket.on("msg", function(data) {
+socket.on("message", function(data) {
     console.log(data);
 });

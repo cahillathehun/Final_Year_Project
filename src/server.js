@@ -31,5 +31,5 @@ io.on("connection", function(socket) {
 
 //used for testing, emits a "yo" every 1000ms
 setInterval(function() {
-io.sockets.emit("msg", "yo");
+io.sockets.emit("message", "yo");
 }, 1000);
