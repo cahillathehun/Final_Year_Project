@@ -11,15 +11,13 @@ var io = socketIO(server);
 
 const PORT = 3000;
 
-app.set("port", PORT); //set port to 3000 for now
+app.set("port", (process.env.PORT || PORT)); //set port to 3000 for now
 
-app.use("./static", express.static(__dirname + "./static")); //for routing
-
-
+app.use("/static", express.static(__dirname + "/static"));
 app.get("/", function(req, res) {
-  //sends html file stored in 'index.html' when endpoint is hit
-  res.sendFile("index.html", {root: path.join(__dirname, "./static")});
+    res.sendFile(path.join(__dirname, "index.html"));
 });
+
 
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
@@ -37,6 +35,7 @@ io.on("connection", function(socket) {
         };
     });
     socket.on("mousemove", function(data) {
+    console.log(data); //logs the clients' mouse positions
     var client = clients[socket.id] || {};
     client.x = data.x;
     client.y = data.y;
@@ -46,7 +45,9 @@ setInterval(function() {
     io.sockets.emit("state", clients);
 }, 1000/60);
 
+/*
 //used for testing, emits a "yo" every 1000ms
 setInterval(function() {
 io.sockets.emit("message", "yo");
 }, 1000);
+*/
