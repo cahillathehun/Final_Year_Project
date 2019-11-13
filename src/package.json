@@ -3,9 +3,7 @@
   "version": "0.0.1",
   "description": "multiplayer game using boids as animals to be flocked to another player's screen.",
   "dependencies": {
-    "browserify": "^16.5.0",
     "express": "^4.17.1",
-    "iohook": "^0.6.1",
     "socket.io": "^2.3.0"
   }
 }
