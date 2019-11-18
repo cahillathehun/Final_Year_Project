@@ -1,5 +1,4 @@
 var socket = io();
-// var ioHook = require("ioHook"); //cant just call this in a file being server by html as it is client side
 
 socket.on("message", function(data) {
     console.log(data);
@@ -29,16 +28,3 @@ setInterval(function() {
 }, 1000/60);
 
 
-
-
-
-/*
-//Dont think im going to use this
-ioHook.on("mousemove", event => {
-    mouseCoords.x = event[1]
-    mouseCoords.y = event[2]
-    console.log(event);
-});
-
-ioHook.start(true);
-*/
