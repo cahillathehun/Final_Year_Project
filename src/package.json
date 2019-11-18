@@ -1,0 +1,9 @@
+{
+  "name": "multi user boids",
+  "version": "0.0.1",
+  "description": "multiplayer game using boids as animals to be flocked to another player's screen.",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
