@@ -29,16 +29,6 @@ io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
         console.log("new client");
-        clients[socket.id] = {
-        x:300,
-        y:300
-        };
-    });
-    socket.on("mousemove", function(data) {
-    console.log(data); //logs the clients' mouse positions
-    var client = clients[socket.id] || {};
-    client.x = data.x;
-    client.y = data.y;
     });
 });
 setInterval(function() {
