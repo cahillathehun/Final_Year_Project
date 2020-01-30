@@ -66,8 +66,10 @@ lodr.load("/static/assets/models/Parrot.glb", function(gltf) {
 });
 
 
-
+camera.position.x = -50;
+camera.position.y = 50;
 camera.position.z = 200;
+
 
 function animate() {
   stats.begin();
