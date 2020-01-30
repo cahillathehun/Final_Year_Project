@@ -47,10 +47,3 @@ io.on("connection", function(socket) {
 setInterval(function() {
     io.sockets.emit("state", clients);
 }, 1000/60);
-
-/*
-//used for testing, emits a "yo" every 1000ms
-setInterval(function() {
-io.sockets.emit("message", "yo");
-}, 1000);
-*/

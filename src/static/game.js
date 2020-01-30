@@ -33,28 +33,52 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
 var renderer = new THREE.WebGLRenderer();
+renderer.setClearColor( 0xC5C5C3 );
+renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-//create geometry
-var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-var cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+// Load Light
+var ambientLight = new THREE.AmbientLight( 0xcccccc );
+scene.add( ambientLight );
 
-camera.position.z = 7;
+var directionalLight = new THREE.DirectionalLight( 0xffffff );
+directionalLight.position.set( 0, 1, 1 ).normalize();
+scene.add( directionalLight );
+
+// //create geometry
+// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+// var cube = new THREE.Mesh( geometry, material );
+// scene.add( cube );
+
+//setup model loader
+const lodr = new THREE.GLTFLoader();
+lodr.load("/static/assets/models/Parrot.glb", function(gltf) {
+  var obj = gltf.scene;
+  gltf.scene.scale.set(2,2,2);
+  gltf.scene.position.x = 0;
+  gltf.scene.position.y = 0;
+  gltf.scene.position.y = 0;
+  scene.add(gltf.scene);
+}, undefined, function(err) {
+  console.error(err);
+});
+
+
+
+camera.position.z = 200;
 
 function animate() {
   stats.begin();
 
   renderer.render( scene, camera );
-  cube.rotation.x += 0.1;
-  cube.rotation.y += 0.1;
+  // cube.rotation.x += 0.1;
+  // cube.rotation.y += 0.1;
+
+  requestAnimationFrame( animate );
 
   stats.end();
 
-  requestAnimationFrame( animate );
-  //cube.translateX(clientX);
-  //console.log("animation req");
 }
 animate();
