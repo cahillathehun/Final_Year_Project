@@ -9,11 +9,10 @@ document.body.appendChild(stats.dom);
 //device orientation tracking
 
 function handleOrientation(event) {
-  var x = event.beta;
-  var y = event.gamma;
+  var accelX = event.beta;
+  var accelY = event.gamma;
 
-  console.log(x);
-  console.log(y);
+  console.log(`accelerometer x: ${accelX} | accelerometer y: ${accelX}`);
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
 
@@ -55,11 +54,18 @@ scene.add( directionalLight );
 //setup model loader
 const lodr = new THREE.GLTFLoader();
 lodr.load("/static/assets/models/Parrot.glb", function(gltf) {
-  var obj = gltf.scene;
+  var obj = gltf.scene.children[0];
   gltf.scene.scale.set(2,2,2);
   gltf.scene.position.x = 0;
   gltf.scene.position.y = 0;
   gltf.scene.position.y = 0;
+
+  const mixer = new THREE.AnimationMixer(obj);
+  const animation = gltf.animations[0];
+  console.log()
+  var action = mixer.clipAction(animation);
+  action.play(animation);
+
   scene.add(gltf.scene);
 }, undefined, function(err) {
   console.error(err);
