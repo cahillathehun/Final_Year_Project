@@ -1,4 +1,13 @@
 var socket = io();
+let container;
+let camera;
+let controls;
+let renderer;
+let scene;
+
+const mixers = []
+const clock = new THREE.Clock();
+
 socket.emit("newClient");
 
 //stats tracking, displays in top right corner
@@ -7,7 +16,8 @@ stats.showPanel(0, 1, 2, 3);
 document.body.appendChild(stats.dom);
 
 //device orientation tracking
-
+var accelX;
+var accelY;
 function handleOrientation(event) {
   var accelX = event.beta;
   var accelY = event.gamma;
@@ -18,75 +28,135 @@ window.addEventListener("deviceorientation", handleOrientation, true);
 
 
 //mouse movement tracking
-var clientX = 0;
-var clientY = 0;
-window.addEventListener("mousemove", event => {
-    clientX = event.x;
-    clientY = event.y;
-    console.log( `x: ${clientX} | y: ${clientY}`);
-});
+var clientX;
+var clientY;
+function mousemove(event){
+  clientX = event.x;
+  clientY = event.y;
+
+  console.log( `mouse x: ${clientX} | mouse y: ${clientY}`);
+}
+window.addEventListener("mousemove", mousemove, true);
+
+function onWindowResize() {
+  camera.aspect = container.clientWidth / container.clientHeight;
+
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(container.clientWidth, container.clientHeight);
+}
+window.addEventListener("resize", onWindowResize);
 
 
 //setting up three.js scene
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+function init() {
+  container = document.querySelector('#scene-container');
 
-var renderer = new THREE.WebGLRenderer();
-renderer.setClearColor( 0xC5C5C3 );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xC5C5C3);
 
-// Load Light
-var ambientLight = new THREE.AmbientLight( 0xcccccc );
-scene.add( ambientLight );
+  createCamera();
+  //createControls();
+  createLights();
+  loadMods();
+  createRenderer();
 
-var directionalLight = new THREE.DirectionalLight( 0xffffff );
-directionalLight.position.set( 0, 1, 1 ).normalize();
-scene.add( directionalLight );
-
-// //create geometry
-// var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// var cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
-
-//setup model loader
-const lodr = new THREE.GLTFLoader();
-lodr.load("/static/assets/models/Parrot.glb", function(gltf) {
-  var obj = gltf.scene.children[0];
-  gltf.scene.scale.set(2,2,2);
-  gltf.scene.position.x = 0;
-  gltf.scene.position.y = 0;
-  gltf.scene.position.y = 0;
-
-  const mixer = new THREE.AnimationMixer(obj);
-  const animation = gltf.animations[0];
-  console.log()
-  var action = mixer.clipAction(animation);
-  action.play(animation);
-
-  scene.add(gltf.scene);
-}, undefined, function(err) {
-  console.error(err);
-});
+  renderer.setAnimationLoop ( () => {
+    stats.begin();
+    update();
+    render();
+    stats.end();
+  });
+}
 
 
-camera.position.x = -50;
-camera.position.y = 50;
-camera.position.z = 200;
 
+//init camera
+function createCamera() {
+  camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+  
+  camera.position.x = -50;
+  camera.position.y = 50;
+  camera.position.z = 200;
+}
 
-function animate() {
-  stats.begin();
+//init lights
+function createLights() {
+  const ambientLight = new THREE.AmbientLight( 0xcccccc );
+  scene.add(ambientLight);
 
-  renderer.render( scene, camera );
-  // cube.rotation.x += 0.1;
-  // cube.rotation.y += 0.1;
-
-  requestAnimationFrame( animate );
-
-  stats.end();
+  const directionalLight = new THREE.DirectionalLight( 0xffffff );
+  directionalLight.position.set( 0, 1, 1 ).normalize();
+  scene.add( directionalLight );
 
 }
-animate();
+
+//init renderer
+function createRenderer() {
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setClearColor( 0xC5C5C3 );
+  document.body.appendChild( renderer.domElement );
+
+}
+
+
+function loadMods() {
+  const lodr = new THREE.GLTFLoader();
+
+  const onLod = (gltf, pos) => {
+    var obj = gltf.scene.children[0];
+    obj.position.copy(pos);
+
+    const animation = gltf.animations[0];
+
+    const mixer = new THREE.AnimationMixer(obj);
+    mixers.push(mixer);
+
+    const action = mixer.clipAction(animation);
+    action.play();
+
+    scene.add(obj);
+  };
+
+  const onProgress = () => {};
+
+  const onError = (errorMsg) => {console.error(errorMsg);};
+
+  var parrotPos = new THREE.Vector3(0,0,2.5);
+  lodr.load("/static/assets/models/Parrot.glb", gltf => onLod(gltf, parrotPos), onProgress, onError);
+
+}
+
+function update() {
+  const delta = clock.getDelta();
+
+  for (const mixer of mixers) {
+    mixer.update(delta);
+  }
+}
+
+function render() {
+  renderer.render( scene, camera );
+
+}
+
+
+
+
+//
+// function animate() {
+//
+//
+//
+//   // cube.rotation.x += 0.1;
+//   // cube.rotation.y += 0.1;
+//
+//   // requestAnimationFrame( animate );
+//
+//
+// }
+// animate();
+
+init();
