@@ -47,6 +47,23 @@ function onWindowResize() {
 }
 window.addEventListener("resize", onWindowResize);
 
+// Implementing Touch event listener
+private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
+private float previousX;
+private float previousY;
+
+@Overide
+function onTouchEvent(MotionEvent e) {
+   float x = e.getX();
+   float y = e.getY();
+
+   previousX = x;
+   previousY = y;
+   // return true;
+
+}
+window.addEventListener("touch", onTouchEvent, true);
+
 
 //setting up three.js scene
 function init() {
