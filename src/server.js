@@ -10,7 +10,7 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 
-const PORT = 3000;
+const PORT = 80;
 
 app.set("port", (process.env.PORT || PORT)); //set port to 3000 for now
 

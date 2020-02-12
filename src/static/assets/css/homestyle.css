@@ -2,6 +2,12 @@ body {
   background-color: #DCDCDC;
 }
 
+#scene-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+
 h1 {
   text-align:center;
   font-family: Arial;
