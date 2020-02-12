@@ -59,6 +59,7 @@ function onTouchEvent(MotionEvent e) {
 
    previousX = x;
    previousY = y;
+   console.log( `touch x: ${x} | touch y: ${y}`);
    // return true;
 
 }
