@@ -1,0 +1,35 @@
+========================================================================================================================
+========================================================================================================================
+
+to ssh into the ec2 instance:
+ssh -i [kepair.pem] [user]@ec2-X-X-X-X.compute-1.amazonaws.com
+
+ie:
+ssh -i fyp.pem ubuntu@ec2-34-236-182-204.compute-1.amazonaws.com
+
+***note that you have to have the .pem file in the directory that you are running the shh command in***
+***the ec2 instance also has to be running for you to be able to ssh into it***
+terminal should then shoW the console @ root directory.
+
+========================================================================================================================
+
+to transfer a file to the ec2 instance:
+ssh -i [path/to/keypair/keepear.pem] [path/to/source/file.js] [user]@ec2-X-X-X-X.compute-1.amazonaws.com
+
+eg:
+scp -i /c/CASE4/FYP/fyp.pem ./server.js ubuntu@ec2-34-236-182-204.compute-1.amazonaws.com:~/src/
+
+***the ec2 instance also has to be running for you to be able to scp to it***
+
+========================================================================================================================
+
+to transfer a directory to the ec2 instance:
+ssh -i -r [path/to/keypair/keepear.pem] [path/to/source/directory/] [user]@ec2-X-X-X-X.compute-1.amazonaws.com
+
+ie:
+scp -i -r /c/CASE4/FYP/fyp.pem ./server.js ubuntu@ec2-34-236-182-204.compute-1.amazonaws.com:~/src/
+
+***the ec2 instance also has to be running for you to be able to scp to it***
+
+========================================================================================================================
+========================================================================================================================
