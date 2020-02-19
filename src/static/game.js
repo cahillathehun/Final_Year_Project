@@ -80,11 +80,11 @@ function init() {
 
 //init camera
 function createCamera() {
-  camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+  camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
 
   camera.position.x = -50;
   camera.position.y = 50;
-  camera.position.z = 800;
+  camera.position.z = 1200;
 }
 
 //init lights
@@ -132,7 +132,7 @@ async function loadMods() {
   const onError = (errorMsg) => {console.error(errorMsg);};
 
   var z = 0;
-  for(i=0;i<50;i++){
+  for(i=0;i<100;i++){
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
   console.log(models);
@@ -148,14 +148,15 @@ function update() {
   for (const mixer of mixers) {
     mixer.update(delta);
   }
+
   if(models.length > 0){
-    var bird = models[0];
-    bird.translateZ(2);
-    bird.rotateY(.05);
-
+    for(const model of models){
+      model.rotateX(getRandomNum(-0.05, 0.05));
+      model.rotateY(getRandomNum(-0.05, 0.05));
+      model.rotateZ(getRandomNum(-0.05, 0.05));
+      model.translateZ(5);
+    }
   }
-
-
 }
 
 //func for rendering mods
