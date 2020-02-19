@@ -8,7 +8,7 @@ let scene;
 const mixers = []
 const clock = new THREE.Clock();
 
-socket.emit("newClient");
+socket.emit("newPlayer");
 
 //stats tracking, displays in top right corner
 var stats = new Stats();

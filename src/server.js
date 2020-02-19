@@ -36,6 +36,9 @@ io.on("connection", function(socket) {
     socket.on("newClient", function(){
         console.log("new connection");
     });
+    socket.on("newPlayer", function(){
+        console.log("a new player wants to play a game!");
+    });
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
@@ -43,7 +46,7 @@ io.on("connection", function(socket) {
 });
 
 
-
-setInterval(function() {
-    io.sockets.emit("state", clients);
-}, 1000/60);
+// 
+// setInterval(function() {
+//     io.sockets.emit("state", clients);
+// }, 100/60);
