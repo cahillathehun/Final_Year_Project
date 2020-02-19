@@ -25,6 +25,15 @@ app.get("/play", function(req, res) {
 });
 
 
+app.get("/settings", function(req, res) {
+    res.sendFile(path.join(__dirname, "/static/settings.html"));
+});
+
+app.get("/about", function(req, res) {
+    res.sendFile(path.join(__dirname, "/static/about.html"));
+});
+
+
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
 });
@@ -46,7 +55,7 @@ io.on("connection", function(socket) {
 });
 
 
-// 
+//
 // setInterval(function() {
 //     io.sockets.emit("state", clients);
 // }, 100/60);
