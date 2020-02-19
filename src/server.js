@@ -5,15 +5,14 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const socketIO = require("socket.io");
-var stats =  require("stats.js");
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
 
-const PORT = 3000;
+const PORT = 80;
 
-app.set("port", (process.env.PORT || PORT)); //set port to 3000 for now
+app.set("port", (process.env.PORT || PORT)); //set port to port 80
 
 app.use("/static", express.static(__dirname + "/static"));
 
@@ -37,6 +36,9 @@ io.on("connection", function(socket) {
     socket.on("newClient", function(){
         console.log("new connection");
     });
+    socket.on("newPlayer", function(){
+        console.log("a new player wants to play a game!");
+    });
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
@@ -44,14 +46,7 @@ io.on("connection", function(socket) {
 });
 
 
-
-setInterval(function() {
-    io.sockets.emit("state", clients);
-}, 1000/60);
-
-/*
-//used for testing, emits a "yo" every 1000ms
-setInterval(function() {
-io.sockets.emit("message", "yo");
-}, 1000);
-*/
+// 
+// setInterval(function() {
+//     io.sockets.emit("state", clients);
+// }, 100/60);

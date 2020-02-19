@@ -1,5 +1,5 @@
 {
-  "name": "multi user boids",
+  "name": "multiUserBoids",
   "version": "0.0.1",
   "description": "multiplayer game using boids as animals to be flocked to another player's screen.",
   "dependencies": {
