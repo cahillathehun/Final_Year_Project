@@ -15,6 +15,10 @@ var stats = new Stats();
 stats.showPanel(0, 1, 2, 3);
 document.body.appendChild(stats.dom);
 
+function getRandomNum(min, max){
+  return Math.random() * (max - min) + min;
+}
+
 //device orientation tracking
 var accelX;
 var accelY;
@@ -65,6 +69,7 @@ function init() {
   renderer.setAnimationLoop ( () => {
     // rendering and animation loop
     stats.begin();
+    // console.log(models);
     update();
     render();
     stats.end();
@@ -79,7 +84,7 @@ function createCamera() {
 
   camera.position.x = -50;
   camera.position.y = 50;
-  camera.position.z = 200;
+  camera.position.z = 800;
 }
 
 //init lights
@@ -104,10 +109,10 @@ function createRenderer() {
 }
 
 var models = []; // lists of models to be rendered
-function loadMods() {
+async function loadMods() {
   const lodr = new THREE.GLTFLoader();
 
-  const onLoad = (gltf, pos) => {
+  const onLoad =(gltf, pos) => {
     var obj = gltf.scene.children[0];
     obj.position.copy(pos);
 
@@ -118,9 +123,6 @@ function loadMods() {
 
     const action = mixer.clipAction(animation);
     action.play();
-    console.log("obj printVVV")
-    console.log(obj);
-    console.log(typeof obj);
     models.push(obj);
     scene.add(obj);
   };
@@ -129,15 +131,15 @@ function loadMods() {
 
   const onError = (errorMsg) => {console.error(errorMsg);};
 
-  startPos = new THREE.Vector3(0,0,0);
-  lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, startPos), onProgress, onError);
+  var z = 0;
+  for(i=0;i<50;i++){
+    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
+  }
+  console.log(models);
 
-  startPos1 = new THREE.Vector3(0,0,-50);
-  lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, startPos1), onProgress, onError);
-  console.log("startPos1 printVVV");
-  console.log(startPos1);
 
 }
+
 
 //func for updating animations
 function update() {
@@ -146,6 +148,14 @@ function update() {
   for (const mixer of mixers) {
     mixer.update(delta);
   }
+  if(models.length > 0){
+    var bird = models[0];
+    bird.translateZ(2);
+    bird.rotateY(.05);
+
+  }
+
+
 }
 
 //func for rendering mods
