@@ -12,7 +12,7 @@ var io = socketIO(server);
 
 const PORT = 80;
 
-app.set("port", (process.env.PORT || PORT)); //set port to 3000 for now
+app.set("port", (process.env.PORT || PORT)); //set port to port 80
 
 app.use("/static", express.static(__dirname + "/static"));
 

@@ -38,12 +38,13 @@ function mousemove(event){
 }
 window.addEventListener("mousemove", mousemove, true);
 
+//resizing func
 function onWindowResize() {
   camera.aspect = container.clientWidth / container.clientHeight;
 
   camera.updateProjectionMatrix();
 
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener("resize", onWindowResize);
 
@@ -53,7 +54,7 @@ function init() {
   container = document.querySelector('#scene-container');
 
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xC5C5C3);
+  scene.background = new THREE.Color(0xC5C5C4);
 
   createCamera();
   //createControls();
@@ -62,6 +63,7 @@ function init() {
   createRenderer();
 
   renderer.setAnimationLoop ( () => {
+    // rendering and animation loop
     stats.begin();
     update();
     render();
@@ -74,7 +76,7 @@ function init() {
 //init camera
 function createCamera() {
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
-  
+
   camera.position.x = -50;
   camera.position.y = 50;
   camera.position.z = 200;
@@ -101,11 +103,11 @@ function createRenderer() {
 
 }
 
-
+var models = []; // lists of models to be rendered
 function loadMods() {
   const lodr = new THREE.GLTFLoader();
 
-  const onLod = (gltf, pos) => {
+  const onLoad = (gltf, pos) => {
     var obj = gltf.scene.children[0];
     obj.position.copy(pos);
 
@@ -116,7 +118,10 @@ function loadMods() {
 
     const action = mixer.clipAction(animation);
     action.play();
-
+    console.log("obj printVVV")
+    console.log(obj);
+    console.log(typeof obj);
+    models.push(obj);
     scene.add(obj);
   };
 
@@ -124,11 +129,17 @@ function loadMods() {
 
   const onError = (errorMsg) => {console.error(errorMsg);};
 
-  var parrotPos = new THREE.Vector3(0,0,2.5);
-  lodr.load("/static/assets/models/Parrot.glb", gltf => onLod(gltf, parrotPos), onProgress, onError);
+  startPos = new THREE.Vector3(0,0,0);
+  lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, startPos), onProgress, onError);
+
+  startPos1 = new THREE.Vector3(0,0,-50);
+  lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, startPos1), onProgress, onError);
+  console.log("startPos1 printVVV");
+  console.log(startPos1);
 
 }
 
+//func for updating animations
 function update() {
   const delta = clock.getDelta();
 
@@ -137,26 +148,11 @@ function update() {
   }
 }
 
+//func for rendering mods
 function render() {
   renderer.render( scene, camera );
 
 }
 
-
-
-
-//
-// function animate() {
-//
-//
-//
-//   // cube.rotation.x += 0.1;
-//   // cube.rotation.y += 0.1;
-//
-//   // requestAnimationFrame( animate );
-//
-//
-// }
-// animate();
-
+//start loop
 init();
