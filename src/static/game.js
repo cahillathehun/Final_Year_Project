@@ -154,7 +154,7 @@ function update() {
       model.rotateX(getRandomNum(-0.05, 0.05));
       model.rotateY(getRandomNum(-0.05, 0.05));
       model.rotateZ(getRandomNum(-0.05, 0.05));
-      model.translateZ(5);
+      model.translateZ(3);
     }
   }
 }
