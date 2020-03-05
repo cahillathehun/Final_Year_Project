@@ -10,10 +10,10 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 
-
+//set port to port 80
 const PORT = 80;
 
-app.set("port", (process.env.PORT || PORT)); //set port to port 80
+app.set("port", (process.env.PORT || PORT));
 
 app.use("/static", express.static(__dirname + "/static"));
 
@@ -48,6 +48,8 @@ const joinRoom = (socket, room) => {
 };
 
 const checkRooms = (socket, roomA) => {
+// auto-matchmaking logic
+
   if(!roomA || !roomA.length){
     //if there is no room with space create a new one
     const room = {
@@ -67,10 +69,6 @@ const checkRooms = (socket, roomA) => {
   }
 }
 
-const getRooms = (socket, rooms) => {
-  socket.emit("getRooms", rooms);
-  console.log("sent");
-}
 
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
@@ -83,36 +81,39 @@ var freeRooms = [];   //list of rooms with only one client in it, used for auto 
 var roomNo = 0;       //not yet used
 io.on("connection", function(socket) {
     console.log("connection made");
+
     socket.on("newClient", function(){
       console.log("new connection");
     });
+
     socket.on("newPlayer", function(){
       console.log("a new player wants to play a game!");
+
       checkRooms(socket, freeRooms);
     });
+
     socket.on("disconnect", function() {
       console.log("user disconnected");
     });
+
     socket.on("getRooms", function() {
-      console.log("Sending list of rooms!");
-      // console.log(rooms);
+      console.log("Sending list of rooms to client!");
+
       const entries = Object.entries(rooms);
       for(i=0; i<entries.length; i++){
-        // iterates through rooms{} and changes the socket objects to number of sockets connected to rooms
-        // did this because socketio doesnt allow you to emit self references of sockets
+        // iterates through rooms{} and converts socket objects to number of sockets connected to rooms
+        // did this because socketio doesnt allow you to emit self references of sockets & message was too big to be sent
         var r = entries[i];
         r[1]["sockets"] = r[1]["sockets"].length;
         }
-        // console.log(entries);
       socket.emit("giveRooms", entries);
     });
+
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
     });
 });
-
-
 
 
 //
