@@ -8,7 +8,6 @@ let scene;
 const mixers = []
 const clock = new THREE.Clock();
 
-socket.emit("newPlayer");
 
 //stats tracking, displays in top right corner
 var stats = new Stats();
@@ -104,7 +103,6 @@ function createRenderer() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setClearColor( 0xC5C5C3 );
   document.body.appendChild( renderer.domElement );
-
 }
 
 var models = []; // lists of models to be rendered
