@@ -5,11 +5,10 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const socketIO = require("socket.io");
+const clone = require("clone-deep");
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
-var stringify = require("json-stringify-safe");
-
 
 //set port to port 80
 const PORT = 80;
@@ -71,6 +70,7 @@ const checkRooms = (socket, roomArray) => {
 }
 
 
+
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
 });
@@ -105,9 +105,10 @@ io.on("connection", function(socket) {
       // TODO: write own stringify function
       // below line uses json-stringify-safe to strnigify the object for cloning
       // this takes too long at the moment
-      var clone = JSON.parse(stringify(rooms));
-      console.log(clone);
-      var entries = Object.entries(clone);
+      let copy = clone(rooms);
+      console.log("ROOMS: ", rooms);
+      console.log("sendable_rooms: ", copy);
+      var entries = Object.entries(copy);
 
       for(i=0; i<entries.length; i++){
         // iterates through rooms{} and converts socket objects to number of sockets connected to rooms
@@ -115,6 +116,7 @@ io.on("connection", function(socket) {
         entries[i][1]["sockets"] = entries[i][1]["sockets"].length;
         }
       socket.emit("giveRooms", entries);
+      console.log(rooms);
     });
 
     io.clients((error, clients) => {
