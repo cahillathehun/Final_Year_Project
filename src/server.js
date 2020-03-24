@@ -47,6 +47,11 @@ const joinRoom = (socket, room) => {
   });
 };
 
+const startGame = (roomid) => {
+  socket.to(roomid).emit("startGame", "start the game");
+  console.log("game starting in room: ", roomid);
+}
+
 const checkRooms = (socket, roomArray) => {
 // auto-matchmaking logic
 
@@ -64,7 +69,10 @@ const checkRooms = (socket, roomArray) => {
     // if there is a room with a space, try to connect the client to it
     const room = freeRooms[0];
     console.log(socket.id, "wants to join", room.id);
+    // connect client to rooms
     joinRoom(socket, room);
+    // room is now full so start the game
+    startGame(room.id);
     freeRooms.pop(room.id)
   }
 }
@@ -106,8 +114,6 @@ io.on("connection", function(socket) {
       // below line uses json-stringify-safe to strnigify the object for cloning
       // this takes too long at the moment
       let copy = clone(rooms);
-      console.log("ROOMS: ", rooms);
-      console.log("sendable_rooms: ", copy);
       var entries = Object.entries(copy);
 
       for(i=0; i<entries.length; i++){
@@ -115,8 +121,9 @@ io.on("connection", function(socket) {
         // did this because socketio doesnt allow you to emit self references of sockets & message was too big to be sent
         entries[i][1]["sockets"] = entries[i][1]["sockets"].length;
         }
+      console.log("ROOMS: ", rooms);
+      console.log("ENTREIS: ", entries);
       socket.emit("giveRooms", entries);
-      console.log(rooms);
     });
 
     io.clients((error, clients) => {
