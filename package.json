@@ -1,0 +1,25 @@
+{
+  "name": "2020-ca400-cahila23-ocearbl2",
+  "version": "1.0.0",
+  "description": "This is a project undertaken by Alexander Cahill and Liam Ó Cearbhaill with the aim of creating a multi-user environment as well as to implement a Boids algorithm.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "three": "^0.111.0",
+    "sinon": "^9.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.computing.dcu.ie:cahila23/2020-ca400-cahila23-ocearbl2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

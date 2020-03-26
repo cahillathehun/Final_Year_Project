@@ -1,14 +1,8 @@
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import sinon from './node_modules/sinon/pkg/sinon-esm.js'
 
-import org.junit.jupiter.api.Test;
+// Setup for test
+var fakeX = sinon.fake.returns('42')
+var fakeY = sinon.fake.returns('42')
 
-public class MyTests {
+// Tests
 
-    @Before
-
-
-    @Test
-
-
-
-}
