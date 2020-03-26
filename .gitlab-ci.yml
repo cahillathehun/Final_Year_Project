@@ -10,12 +10,13 @@ pretest:
   script:
     - echo 'Tests are about to begin'
 
-test:
+build:
   stage: test
   script:
     - npm install
     - ls
-    - build/test.sh
+    - cd build/
+    - test.sh
     # - npm run test
 
 post_test:
