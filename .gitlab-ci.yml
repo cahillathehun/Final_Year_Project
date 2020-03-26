@@ -15,8 +15,7 @@ build:
   script:
     - npm install
     - ls
-    - cd build/
-    - test.sh
+    - ${BASH_SOURCE%/*}/build/test.sh
     # - npm run test
 
 post_test:
