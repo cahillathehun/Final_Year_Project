@@ -1,17 +1,17 @@
 image: node:latest
 
 stages:
-  -build-test
+    "build"-"test"
 
 job 0:
-  stage: .pre
+  stage: pre
   script: echo 'tests beginning'
 
 job 1:
   stage : build-test
-  script:
-  -npm install
-  - node server.js &
-  -npm test "test/static/clientTest.js
-  -npm test "test/static/gameTest.js
-  -npm test "test/static/matchmakeTest.js
+  script: npm install
+  -node server.js &
+  -./build/build.sh
+#  -npm test "test/static/clientTest.js
+#  -npm test "test/static/gameTest.js
+#  -npm test "test/static/matchmakeTest.js
