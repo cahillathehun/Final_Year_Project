@@ -10,10 +10,11 @@ pretest:
   script:
     - echo 'Tests are about to begin'
 
-local_integration_test:
+test:
   stage: test
   script:
     - npm install
+    - ls
     - npm run test
 
 post_test:
