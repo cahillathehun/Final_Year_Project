@@ -15,7 +15,8 @@ test:
   script:
     - npm install
     - ls
-    - npm run test
+    - build/test.sh
+    # - npm run test
 
 post_test:
   stage: post
