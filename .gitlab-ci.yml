@@ -13,7 +13,7 @@ pretest:
 local_integration_test:
   stage: test
   script:
-    - ./build/test.sh
+    - /build/test.sh
 
 post_test:
   stage: post
