@@ -49,13 +49,9 @@ function createRoomsList(rooms) {
 
 function createChat(elementID){
   // func for creating chat box on screen
-
   var div = document.getElementById(elementID);
-  div.innerHTML = '<ul id="messages"></ul>';
-  div.innerHTML = '<form action="">';
-  div.innerHTML = '<input id="m" autocomplete="off"/>';
-  div.innerHTML = '<button>Send</button>';
-  div.innerHTML = '</form>';
+
+  div.innerHTML = '<ul id="messages"></ul> <form action=""> <input id="m" autocomplete="off"/> <button>Send</button> </form>';
 }
 
 function clearMain(elementID) {
