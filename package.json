@@ -16,7 +16,7 @@
     "eslint": "^6.8.0"
   },
   "scripts": {
-    "test": "chmod +x build/test.sh && build/test.sh",
+    "test": "chmod +x 2020-ca400-cahila23-ocearbl2/build/test.sh && 2020-ca400-cahila23-ocearbl2/build/test.sh",
     "lint": "eslint"
   },
   "repository": {
