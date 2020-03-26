@@ -1,17 +1,26 @@
 image: node:latest
 
 stages:
-    "build"-"test"
+  - pre
+  - test # All items in this file are subject to change
+  - post
 
-job 0:
+pretest:
   stage: pre
-  script: echo 'tests beginning'
+  script:
+    - echo 'Tests are about to begin'
 
-job 1:
-  stage : build-test
-  script: npm install
-  -node server.js &
-  -./build/build.sh
+local_integration_test:
+  stage: test
+  script:
+    - ./build/test.sh
+
+post_test:
+  stage: post
+  script:
+    - npm install
+    - node server.js &
+    - npm test "test/static/gameTest.js" #placeholder
 #  -npm test "test/static/clientTest.js
 #  -npm test "test/static/gameTest.js
 #  -npm test "test/static/matchmakeTest.js
