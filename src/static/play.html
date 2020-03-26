@@ -5,42 +5,19 @@
         <title>Multiplayer Boids Game</title>
         <link type="text/css" rel="stylesheet" href="/static/assets/css/homestyle.css">
         <script src="/socket.io/socket.io.js"></script>
-        <style>
-          body { margin: 0; }
-          canvas {  width: 100%;
-                    height: 100%;
-                  }
-		  form {	background: #000;
-					padding: 3px;
-					position: fixed;
-					bottom: 0;
-					width: 100%;
-					}
-		  form input {	border: 0;
-						padding: 10px;
-						width: 90%;
-						morgin-right: 5%;
-						}
-		  form button { background: rgb(140, 225, 255);
-						padding: 10px;
-						width: 9%;
-						border: none;
-						}
-		  #messages { list-style-type: none; margin: 0; padding: 0; }
-		  #messages li { padding: 5px 10px; }
-		  #messages li:nth-child(odd) { background: #eee; }
-						
-					
-			
-        </style>
     </head>
 
     <body>
-	  <ul id="messages"></ul>
-	  <form action="">
-		<input id="m" autocomplete="off"/>
-		<button>Send</button>
-	  </form>
+      <div id="main">
+        <h1>MUBS</h1>
+
+        <h2>(Multi User BoidS)</h2>
+        <p>Auto-matchmake by clicking the button or you can choose or create an available room from the list below below.</p>
+        <button onclick="autoMatch()"> Auto</button>
+          <div id="list_div">
+          </div>
+      </div>
+
       <script src="/static/scripts/stats.js/build/stats.min.js"></script>
       <script src="https://threejs.org/build/three.js"></script>
       <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
