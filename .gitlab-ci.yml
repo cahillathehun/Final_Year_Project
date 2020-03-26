@@ -13,14 +13,16 @@ pretest:
 local_integration_test:
   stage: test
   script:
-    - ~/build/test.sh
+    - npm install
+    - npm run test
 
 post_test:
   stage: post
   script:
-    - npm install
-    - node server.js &
-    - npm test "test/static/gameTest.js" #placeholder
+    - echo 'Tests have finished'
+    # - npm install
+    # - node server.js &
+    # - npm test "test/static/gameTest.js" #placeholder
 #  -npm test "test/static/clientTest.js
 #  -npm test "test/static/gameTest.js
 #  -npm test "test/static/matchmakeTest.js
