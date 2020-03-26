@@ -1,0 +1,30 @@
+image: node:latest
+
+stages:
+  - pre
+  - test # All items in this file are subject to change
+  - post
+
+pretest:
+  stage: pre
+  script:
+    - echo 'Tests are about to begin'
+
+build:
+  stage: test
+  script:
+    - npm install
+    - ls
+    - ${BASH_SOURCE%/*}/build/test.sh
+    # - npm run test
+
+post_test:
+  stage: post
+  script:
+    - echo 'Tests have finished'
+    # - npm install
+    # - node server.js &
+    # - npm test "test/static/gameTest.js" #placeholder
+#  -npm test "test/static/clientTest.js
+#  -npm test "test/static/gameTest.js
+#  -npm test "test/static/matchmakeTest.js
