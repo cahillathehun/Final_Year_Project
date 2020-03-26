@@ -12,4 +12,6 @@ job 1:
   script:
   -npm install
   - node server.js &
-  -npm test "test/integration/test.js
+  -npm test "test/static/clientTest.js
+  -npm test "test/static/gameTest.js
+  -npm test "test/static/matchmakeTest.js
