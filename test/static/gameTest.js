@@ -1,9 +1,9 @@
 //import sinon from './node_modules/sinon/pkg/sinon-esm.js'
 
 const sinon = require("sinon").createSandbox();
-const referee = require("@sinonjs/referee");
-const assert = referee.assert;
-const mousemove = require()
+// const referee = require("@sinonjs/referee");
+// const assert = sinon.assert();
+// const mousemove = require();
 // const PubSub = require("pubsub-js"); // this is a library to use pub/sub "messaging" methods
 // const mousemove = new mou
 
@@ -35,7 +35,7 @@ describe("Wrap around mousemove, can add more methods and change describe to wra
       spyY.restor(); // sinon.restore() would probably handle it but these are included just to be sure.
     }
     catch(error) { console.log("Alt Spy restore failed as regular restore succeeded")}
-    console.log("Posty restore:")
+    console.log("Post restore:")
     console.log(fakeXY.X);
     console.log(fakeXY.Y);
   });
@@ -44,7 +44,9 @@ describe("Wrap around mousemove, can add more methods and change describe to wra
     const callbackSpy = sinon.spy();
 
     PubSub.subscribe("", callbackSpy);
-    PubSub.publishSync()
+    PubSub.publishSync("");
+    sinon.assert.called(fakeXY.X);
+    console.log("So the test got to this point!")
 
 
     

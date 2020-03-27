@@ -8,6 +8,8 @@
     "test": "test"
   },
   "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
     "pubsub-js": "^1.8.0",
     "sinon": "^9.0.1",
     "three": "^0.111.0"
