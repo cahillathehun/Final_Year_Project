@@ -8,6 +8,7 @@ let scene;
 const mixers = []
 const clock = new THREE.Clock();
 
+socket.emit("newPlayer");
 
 //stats tracking, displays in top right corner
 var stats = new Stats();
@@ -15,7 +16,6 @@ stats.showPanel(0, 1, 2, 3);
 document.body.appendChild(stats.dom);
 
 function getRandomNum(min, max){
-  // get rand no between min and max
   return Math.random() * (max - min) + min;
 }
 
@@ -23,7 +23,6 @@ function getRandomNum(min, max){
 var accelX;
 var accelY;
 function handleOrientation(event) {
-  // func for handling mobile device orientation
   var accelX = event.beta;
   var accelY = event.gamma;
 
@@ -36,7 +35,6 @@ window.addEventListener("deviceorientation", handleOrientation, true);
 var clientX;
 var clientY;
 function mousemove(event){
-  // function for tracking mouse movement on screen (x,y) coords
   clientX = event.x;
   clientY = event.y;
 
@@ -46,9 +44,10 @@ window.addEventListener("mousemove", mousemove, true);
 
 //resizing func
 function onWindowResize() {
-  // TODO: fix this, doesnt work at all and gives warning/error msg
   camera.aspect = container.clientWidth / container.clientHeight;
+
   camera.updateProjectionMatrix();
+
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener("resize", onWindowResize);
@@ -57,10 +56,12 @@ window.addEventListener("resize", onWindowResize);
 //setting up three.js scene
 function init() {
   container = document.querySelector('#scene-container');
+
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
 
   createCamera();
+  //createControls();
   createLights();
   loadMods();
   createRenderer();
@@ -68,6 +69,7 @@ function init() {
   renderer.setAnimationLoop ( () => {
     // rendering and animation loop
     stats.begin();
+    // console.log(models);
     update();
     render();
     stats.end();
@@ -92,8 +94,8 @@ function createLights() {
 
   const directionalLight = new THREE.DirectionalLight( 0xffffff );
   directionalLight.position.set( 0, 1, 1 ).normalize();
-
   scene.add( directionalLight );
+
 }
 
 //init renderer
@@ -103,6 +105,7 @@ function createRenderer() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setClearColor( 0xC5C5C3 );
   document.body.appendChild( renderer.domElement );
+
 }
 
 var models = []; // lists of models to be rendered
@@ -132,6 +135,9 @@ async function loadMods() {
   for(i=0;i<100;i++){
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
+  console.log(models);
+
+
 }
 
 
@@ -145,11 +151,10 @@ function update() {
 
   if(models.length > 0){
     for(const model of models){
-      // movement loop, just a placeholder for now
       model.rotateX(getRandomNum(-0.05, 0.05));
       model.rotateY(getRandomNum(-0.05, 0.05));
       model.rotateZ(getRandomNum(-0.05, 0.05));
-      model.translateZ(3);
+      model.translateZ(5);
     }
   }
 }
@@ -157,6 +162,7 @@ function update() {
 //func for rendering mods
 function render() {
   renderer.render( scene, camera );
+
 }
 
 //start loop

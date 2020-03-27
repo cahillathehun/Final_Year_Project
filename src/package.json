@@ -3,12 +3,9 @@
   "version": "0.0.1",
   "description": "multiplayer game using boids as animals to be flocked to another player's screen.",
   "dependencies": {
-    "clone-deep": "^4.0.1",
     "express": "^4.17.1",
-    "json-stringify-safe": "^5.0.1",
     "socket.io": "^2.3.0",
     "stats.js": "^0.17.0",
-    "three": "^0.112.1",
-    "uuid": "^3.4.0"
+    "three": "^0.112.1"
   }
 }
