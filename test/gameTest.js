@@ -1,6 +1,4 @@
-import {mousemove} from '../src/static/game.js'
-
-//import sinon from './node_modules/sinon/pkg/sinon-esm.js'
+import mousemove from '../src/static/game.js';
 
 const sinon = require("sinon").createSandbox();
 var chai = require('chai');

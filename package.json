@@ -19,10 +19,16 @@
     "three": "^0.111.0"
   },
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.5.4",
+    "@babel/register": "^7.4.4",
+    "babel-cli": "^6.26.0",
+    "eslint": "^6.8.0",
+    "mocha": "^7.1.1"
   },
   "scripts": {
-    "test": "BABEL_ENV=test mocha || TRUE",
+    "start": "babel-node ./test/gameTest.js",
+    "test": "./node_modules/.bin/mocha --compilers js:@babel/register",
     "test-console-log": "BABEL_ENV=test-console mocha || TRUE",
     "lint": "eslint"
   },

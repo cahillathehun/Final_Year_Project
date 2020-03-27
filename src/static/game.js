@@ -158,6 +158,6 @@ function update() {
 function render() {
   renderer.render( scene, camera );
 }
-
+export default mousemove;
 //start loop
 init();
