@@ -21,7 +21,7 @@ socket.on("giveRooms", function(rooms) {
   for(i=0; i<roomList.length; i++){
     var graph = document.createElement("p");      // create paragraph element
     var rName = roomList[i][0];                   // get the room name
-    var noPlayers = roomList[i][1]["sockets"];    // get number of players in the room
+    var noPlayers = roomList[0][1]["sockets"];    // get number of players in the room
     console.log("players: ", noPlayers);
     var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
     // below adds the text to the div element
