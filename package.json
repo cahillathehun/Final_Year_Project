@@ -8,7 +8,11 @@
     "test": "test"
   },
   "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "babel": "^6.23.0",
     "chai": "^4.2.0",
+    "jquery": "^3.4.1",
     "mocha": "^7.1.1",
     "pubsub-js": "^1.8.0",
     "sinon": "^9.0.1",
@@ -18,12 +22,34 @@
     "eslint": "^6.8.0"
   },
   "scripts": {
-    "test": "echo Tests Beginning",
+    "test": "BABEL_ENV=test mocha || TRUE",
+    "test-console-log": "BABEL_ENV=test-console mocha || TRUE",
     "lint": "eslint"
   },
   "repository": {
-    "type": "git",
+    "type": "module",
     "url": "git@gitlab.computing.dcu.ie:cahila23/2020-ca400-cahila23-ocearbl2.git"
+  },
+  "babel": {
+    "env": {
+      "test-console": {
+        "presets": [
+          "@babel/preset-env"
+        ],
+        "plugins": [
+          "@babel/plugin-proposal-class-properties"
+        ]
+      },
+      "test": {
+        "presets": [
+          "@babel/preset-env"
+        ],
+        "plugins": [
+          "@babel/plugin-proposal-class-properties",
+          "transform-remove-console"
+        ]
+      }
+    }
   },
   "keywords": [],
   "author": "",
