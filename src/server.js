@@ -36,46 +36,46 @@ app.get("/about", function(req, res) {
     res.sendFile(path.join(__dirname, "/static/about.html"));
 });
 
-const joinRoom = (socket, room) => {
-  // connect the client to the room
-  room.sockets.push(socket);
-  socket.join(room.id, () => {
-    socket.roomId = room.id;
-    console.log(socket.id, "joined", room.id);
-  });
-};
-
-const checkRooms = (socket, roomArray) => {
-// auto-matchmaking logic
-
-  if(!roomArray || !roomArray.length){
-    //if there is no room with space create a new one
-    const room = {
-      id: uuid(),
-      sockets: []
-    };
-    rooms[room.id] = room;
-    freeRooms.push(room);   // push this newly created room into freeRooms so that it can be found by checkRooms()
-    joinRoom(socket, room);
-    return(false);
-
-  } else {
-    // if there is a room with a space, try to connect the client to it
-    const room = freeRooms[0];
-    console.log(socket.id, "wants to join", room.id);
-    joinRoom(socket, room);
-    // room is now full so start the game
-    freeRooms.pop(room.id);
-    return(room);
-  }
-}
-
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
 });
 
+async function joinRoom(socket, room) {
+  // connect the client to the room
+  await socket.join(room);
+  console.log(socket.id, "joined", room);
+
+};
+
+
+function checkRooms(socket, roomArray) {
+// auto-matchmaking logic
+
+  if(!roomArray || !roomArray.length){
+    //if there is no room with space create a new one
+    const room = uuid();
+    r_list.push(room);
+    free_rooms.push(room);
+    joinRoom(socket, room);
+    return(null);
+
+  } else {
+    // if there is a room with a space, try to connect the client to it
+    const room = free_rooms[0];
+    console.log(socket.id, "wants to join", room);
+    // connect client to rooms
+    joinRoom(socket, room);
+    free_rooms.pop(room);
+    // room is now full so start the game
+    return(room);
+  }
+}
+
+
+
 //websocket handling
-var clients = {}
+r_list = []
+var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
@@ -83,17 +83,13 @@ io.on("connection", function(socket) {
     });
 
     socket.on("autoMatch", function(){
-      // console.log("a new player wants to play a game!");
 
-      game_start_state = checkRooms(socket, freeRooms);
-      // console.log("GSS: ");
-      // console.log(game_start_state.id);
+      game_start_state = checkRooms(socket, free_rooms);
+
       socket.emit("clearScreen","cls");
       if (game_start_state){
-        rs = io.sockets.adapter.rooms;
-        console.log("ROOMS :", rs);
-        // console.log("told room", game_start_state.id, "to start their game!")
-        socket.to(game_start_state.id).emit("startGame", game_start_state.id);
+        console.log("told room", game_start_state, "to start their game!")
+        io.to(game_start_state).emit("startGame", game_start_state);
       }
     });
 
@@ -102,31 +98,30 @@ io.on("connection", function(socket) {
     });
 
     socket.on("getRooms", function() {
-      // console.log("Sending list of rooms to client!");
-      // uses node package to clone "rooms" obj without ref to original so
-      // it can be sent to client
-      let copy = clone(rooms);
-      console.log("ROOMS: ", rooms);
-      console.log("sendable_rooms: ", copy);
-      var entries = Object.entries(copy);
+      console.log("Sending list of rooms to client!");
 
-      for(i=0; i<entries.length; i++){
-        // loop changes sockets to number of sockets in room
-        entries[i][1]["sockets"] = entries[i][1]["sockets"].length;
+      display_rooms = []
+      rooms = io.sockets.adapter.rooms;
+      var r_name;
+      var r_length;
+      for(i=0; i<r_list.length; i++){
+        r = r_list[i];
+        // check if room in our room list exists anymore
+        if(r in rooms){
+          // if it does, add to list of display rooms
+          r_length = rooms[r]["length"];
+          var display_room = [ r, r_length];
+          display_rooms.push(display_room);
+        } else {
+          // if it doesn't remove from our rooms list so that it doesnt get displayed
+          r_list.splice(i,1);
         }
-      // console.log("ROOMS: ", rooms);
-      // console.log("ENTREIS: ", entries);
-      socket.emit("giveRooms", entries);
-      console.log(rooms);
+      }
+      // emit the list of rooms to client for display
+      socket.emit("giveRooms", display_rooms);
     });
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
     });
 });
-
-
-// 
-// setInterval(function() {
-//     io.sockets.emit("state", clients);
-// }, 100/60);

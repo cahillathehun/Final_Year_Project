@@ -6,9 +6,9 @@ let renderer;
 let scene;
 
 
+// SOCKET STUFF //
 
 var roomList = []
-
 
 function autoMatch(){
   // function for auto matchmaking
@@ -17,6 +17,7 @@ function autoMatch(){
 }
 
 function createStyle () {
+  // func for writing css to head of play.html
   var css = document.createElement("style");
   css.type = "text/css";
   var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 10px; width: 90%; margin-right: 5%; } form button { background: rgb(140, 225, 255); padding: 10px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
@@ -29,7 +30,7 @@ function createRoomsList(rooms) {
   roomList = rooms;
   // strings used for string building below for writing into the div html element
   // TODO make list of rooms look nicer
-  
+
   var name_string = "Room name: ";
   var space_string = " ";
   var players_string = "Players: "
@@ -37,9 +38,10 @@ function createRoomsList(rooms) {
   for(i=0; i<rooms.length; i++){
     var graph = document.createElement("p");      // create paragraph element
     var rName = rooms[i][0];                   // get the room name
-    var noPlayers = rooms[i][1]["sockets"];    // get number of players in the room
+    var noPlayers = rooms[i][1];    // get number of players in the room
     console.log("players: ", noPlayers);
     var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
+
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
@@ -57,7 +59,7 @@ function createChat(elementID){
 }
 
 function clearMain(elementID) {
-  // func for clearing romm list off screen
+  // func for clearing room list off screen
   var div = document.getElementById(elementID);
 
   while(div.firstChild) {
@@ -81,7 +83,6 @@ socket.on("clearScreen", function(rooms) {
 });
 
 
-
 socket.on("startGame", function(rid) {
   console.log("starting game in room: ", rid);
   // TODO: create startGame Function
@@ -97,12 +98,7 @@ socket.on("startGame", function(rid) {
 
 
 
-
-
-
-
-
-
+// GLTF & THREE.JS STUFF //
 
 const mixers = []
 const clock = new THREE.Clock();
@@ -119,25 +115,27 @@ function getRandomNum(min, max){
 }
 
 //device orientation tracking
-var accelX;
-var accelY;
+var accel_x;
+var accel_y;
 function handleOrientation(event) {
-  var accelX = event.beta;
-  var accelY = event.gamma;
+  // func for handling mobile device orientation
+  var accel_x = event.beta;
+  var accel_y = event.gamma;
 
-  console.log(`accelerometer x: ${accelX} | accelerometer y: ${accelX}`);
+  console.log(`accelerometer x: ${accel_x} | accelerometer y: ${accel_y}`);
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
 
 
 //mouse movement tracking
-var clientX;
-var clientY;
+var client_x;
+var client_y;
 function mousemove(event){
-  clientX = event.x;
-  clientY = event.y;
+  // function for tracking mouse movement on screen (x,y) coords
+  client_x = event.x;
+  client_y = event.y;
 
-  console.log( `mouse x: ${clientX} | mouse y: ${clientY}`);
+  console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
 window.addEventListener("mousemove", mousemove, true);
 
@@ -166,13 +164,13 @@ function createCamera() {
 
 //init lights
 function createLights() {
-  const ambientLight = new THREE.AmbientLight( 0xcccccc );
-  scene.add(ambientLight);
+  const ambient_light = new THREE.AmbientLight( 0xcccccc );
+  scene.add(ambient_light);
 
-  const directionalLight = new THREE.DirectionalLight( 0xffffff );
-  directionalLight.position.set( 0, 1, 1 ).normalize();
-  scene.add( directionalLight );
+  const directiona_light = new THREE.DirectionalLight( 0xffffff );
+  directiona_light.position.set( 0, 1, 1 ).normalize();
 
+  scene.add( directiona_light );
 }
 
 //init renderer
@@ -210,6 +208,7 @@ function loadMods() {
 
   var z = 0;
   for(i=0;i<100;i++){
+    // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
   console.log(models);
