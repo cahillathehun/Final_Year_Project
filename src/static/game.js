@@ -28,7 +28,8 @@ function createStyle () {
 function createRoomsList(rooms) {
   roomList = rooms;
   // strings used for string building below for writing into the div html element
-
+  // TODO make list of rooms look nicer
+  
   var name_string = "Room name: ";
   var space_string = " ";
   var players_string = "Players: "
@@ -49,6 +50,7 @@ function createRoomsList(rooms) {
 
 function createChat(elementID){
   // func for creating chat box on screen
+  // TODO make chat bar look nicer
   var div = document.getElementById(elementID);
 
   div.innerHTML = '<ul id="messages"></ul> <form action=""> <input id="m" autocomplete="off"/> <button>Send</button> </form>';
