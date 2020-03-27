@@ -103,6 +103,7 @@ socket.on("startGame", function(rid) {
 const mixers = []
 const clock = new THREE.Clock();
 
+socket.emit("newPlayer");
 
 //stats tracking, displays in top right corner
 var stats = new Stats();
@@ -110,7 +111,6 @@ stats.showPanel(0, 1, 2, 3);
 document.body.appendChild(stats.dom);
 
 function getRandomNum(min, max){
-  // get rand no between min and max
   return Math.random() * (max - min) + min;
 }
 
@@ -141,9 +141,10 @@ window.addEventListener("mousemove", mousemove, true);
 
 //resizing func
 function onWindowResize() {
-  // TODO: fix this, doesnt work at all and gives warning/error msg
   camera.aspect = container.clientWidth / container.clientHeight;
+
   camera.updateProjectionMatrix();
+
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener("resize", onWindowResize);
@@ -179,6 +180,7 @@ function createRenderer() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setClearColor( 0xC5C5C3 );
   document.body.appendChild( renderer.domElement );
+
 }
 
 var models = []; // lists of models to be rendered
@@ -209,6 +211,9 @@ function loadMods() {
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
+  console.log(models);
+
+
 }
 
 
@@ -222,11 +227,10 @@ function update() {
 
   if(models.length > 0){
     for(const model of models){
-      // movement loop, just a placeholder for now
       model.rotateX(getRandomNum(-0.05, 0.05));
       model.rotateY(getRandomNum(-0.05, 0.05));
       model.rotateZ(getRandomNum(-0.05, 0.05));
-      model.translateZ(3);
+      model.translateZ(5);
     }
   }
 }
@@ -234,6 +238,7 @@ function update() {
 //func for rendering mods
 function render() {
   renderer.render( scene, camera );
+
 }
 
 //setting up three.js scene
