@@ -57,17 +57,18 @@ const checkRooms = (socket, roomArray) => {
     rooms[room.id] = room;
     freeRooms.push(room);   // push this newly created room into freeRooms so that it can be found by checkRooms()
     joinRoom(socket, room);
+    return(false);
 
   } else {
     // if there is a room with a space, try to connect the client to it
     const room = freeRooms[0];
     console.log(socket.id, "wants to join", room.id);
     joinRoom(socket, room);
-    freeRooms.pop(room.id)
+    // room is now full so start the game
+    freeRooms.pop(room.id);
+    return(room);
   }
 }
-
-
 
 server.listen(PORT, function() {
   console.log("server started on port %d", PORT);
@@ -78,7 +79,22 @@ var clients = {}
 io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
-        console.log("new connection");
+      console.log("new connection");
+    });
+
+    socket.on("autoMatch", function(){
+      // console.log("a new player wants to play a game!");
+
+      game_start_state = checkRooms(socket, freeRooms);
+      // console.log("GSS: ");
+      // console.log(game_start_state.id);
+      socket.emit("clearScreen","cls");
+      if (game_start_state){
+        rs = io.sockets.adapter.rooms;
+        console.log("ROOMS :", rs);
+        // console.log("told room", game_start_state.id, "to start their game!")
+        socket.to(game_start_state.id).emit("startGame", game_start_state.id);
+      }
     });
 
     socket.on("disconnect", function() {
@@ -86,23 +102,20 @@ io.on("connection", function(socket) {
     });
 
     socket.on("getRooms", function() {
-      console.log("Sending list of rooms to client!");
-      // TODO: the following code actually changes the "sockets" key in the room object to an int
-      // instead of chaning the reference to the object
-
-      // TODO: write own stringify function
-      // below line uses json-stringify-safe to strnigify the object for cloning
-      // this takes too long at the moment
+      // console.log("Sending list of rooms to client!");
+      // uses node package to clone "rooms" obj without ref to original so
+      // it can be sent to client
       let copy = clone(rooms);
       console.log("ROOMS: ", rooms);
       console.log("sendable_rooms: ", copy);
       var entries = Object.entries(copy);
 
       for(i=0; i<entries.length; i++){
-        // iterates through rooms{} and converts socket objects to number of sockets connected to rooms
-        // did this because socketio doesnt allow you to emit self references of sockets & message was too big to be sent
+        // loop changes sockets to number of sockets in room
         entries[i][1]["sockets"] = entries[i][1]["sockets"].length;
         }
+      // console.log("ROOMS: ", rooms);
+      // console.log("ENTREIS: ", entries);
       socket.emit("giveRooms", entries);
       console.log(rooms);
     });

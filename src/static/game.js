@@ -5,6 +5,105 @@ let controls;
 let renderer;
 let scene;
 
+
+
+var roomList = []
+
+
+function autoMatch(){
+  // function for auto matchmaking
+  console.log("auto matchmaking player");
+  socket.emit("autoMatch");
+}
+
+function createStyle () {
+  var css = document.createElement("style");
+  css.type = "text/css";
+  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 10px; width: 90%; margin-right: 5%; } form button { background: rgb(140, 225, 255); padding: 10px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
+  var css_text = document.createTextNode(text);
+  css.appendChild(css_text);
+  document.getElementsByTagName("head")[0].appendChild(css);
+}
+
+function createRoomsList(rooms) {
+  roomList = rooms;
+  // strings used for string building below for writing into the div html element
+  // TODO make list of rooms look nicer
+  
+  var name_string = "Room name: ";
+  var space_string = " ";
+  var players_string = "Players: "
+
+  for(i=0; i<rooms.length; i++){
+    var graph = document.createElement("p");      // create paragraph element
+    var rName = rooms[i][0];                   // get the room name
+    var noPlayers = rooms[i][1]["sockets"];    // get number of players in the room
+    console.log("players: ", noPlayers);
+    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
+    // below adds the text to the div element
+    var node = document.createTextNode(roomAndPlayers);
+    graph.appendChild(node);
+    var element = document.getElementById("list_div");
+    element.appendChild(graph);
+  }
+}
+
+function createChat(elementID){
+  // func for creating chat box on screen
+  // TODO make chat bar look nicer
+  var div = document.getElementById(elementID);
+
+  div.innerHTML = '<ul id="messages"></ul> <form action=""> <input id="m" autocomplete="off"/> <button>Send</button> </form>';
+}
+
+function clearMain(elementID) {
+  // func for clearing romm list off screen
+  var div = document.getElementById(elementID);
+
+  while(div.firstChild) {
+    div.removeChild(div.firstChild);
+  }
+
+}
+
+socket.emit("getRooms");    //tells the server it wants a list of the rooms
+
+socket.on("giveRooms", function(rooms) {
+  // calls createRoomsList when client hears "giveRoom" msg from server
+  createRoomsList(rooms);
+});
+
+
+socket.on("clearScreen", function(rooms) {
+  clearMain("main");
+  createStyle();
+  createChat("main");
+});
+
+
+
+socket.on("startGame", function(rid) {
+  console.log("starting game in room: ", rid);
+  // TODO: create startGame Function
+  // startGame();
+  //start loop
+  init();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const mixers = []
 const clock = new THREE.Clock();
 
@@ -53,28 +152,6 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize);
 
 
-//setting up three.js scene
-function init() {
-  container = document.querySelector('#scene-container');
-
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xC5C5C4);
-
-  createCamera();
-  //createControls();
-  createLights();
-  loadMods();
-  createRenderer();
-
-  renderer.setAnimationLoop ( () => {
-    // rendering and animation loop
-    stats.begin();
-    // console.log(models);
-    update();
-    render();
-    stats.end();
-  });
-}
 
 
 
@@ -109,7 +186,7 @@ function createRenderer() {
 }
 
 var models = []; // lists of models to be rendered
-async function loadMods() {
+function loadMods() {
   const lodr = new THREE.GLTFLoader();
 
   const onLoad =(gltf, pos) => {
@@ -165,5 +242,22 @@ function render() {
 
 }
 
-//start loop
-init();
+//setting up three.js scene
+function init() {
+  container = document.querySelector('#scene-container');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xC5C5C4);
+
+  createCamera();
+  createLights();
+  loadMods();
+  createRenderer();
+
+  renderer.setAnimationLoop ( () => {
+    // rendering and animation loop
+    stats.begin();
+    update();
+    render();
+    stats.end();
+  });
+}
