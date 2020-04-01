@@ -71,10 +71,8 @@ function checkRooms(socket, roomArray) {
   }
 }
 
-
-
 //websocket handling
-r_list = []
+var r_list = []
 var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
     console.log("connection made");
