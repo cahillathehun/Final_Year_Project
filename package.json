@@ -11,7 +11,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo this call should start tests",
-    "start": "nodemon ./src/server.js"
+    "start": "nodemon --exec babel-node ./src/server.js"
 
   },
   "devDependencies": {

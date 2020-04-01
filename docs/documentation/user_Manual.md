@@ -14,3 +14,7 @@ User eners MUBS via browser.
 User has the option to enter a game room.
 
 Matchmaking will pair two users together at a time
+
+From a developers perspective:
+
+start server using 'sudo npm start'
