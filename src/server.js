@@ -98,7 +98,7 @@ io.on("connection", function(socket) {
     socket.on("getRooms", function() {
       console.log("Sending list of rooms to client!");
 
-      display_rooms = []
+      var display_rooms = []
       rooms = io.sockets.adapter.rooms;
       var r_name;
       var r_length;
@@ -108,7 +108,7 @@ io.on("connection", function(socket) {
         if(r in rooms){
           // if it does, add to list of display rooms
           r_length = rooms[r]["length"];
-          var display_room = [ r, r_length];
+          display_room = [ r, r_length];
           display_rooms.push(display_room);
         } else {
           // if it doesn't remove from our rooms list so that it doesnt get displayed
