@@ -1,14 +1,9 @@
 
-<<<<<<< HEAD
 /*
 DEPENDENCIES
 */
 // const uuid = require("uuid/v1")    // now depreciated
 const { v4: uuidv4 } = require('uuid');
-=======
-//dependencies
-const uuid = require("uuid/v1")
->>>>>>> uploaded working code.
 const express = require("express");
 const http = require("http");
 const path = require("path");
