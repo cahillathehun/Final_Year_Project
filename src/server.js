@@ -1,23 +1,21 @@
 
 //dependencies
-const uuid = require("uuid/v1");
+
 const express = require("express");
 const http = require("http");
 const path = require("path");
 const socketIO = require("socket.io");
-const clone = require("clone-deep");
 var app = express();
 var server = http.Server(app);
 var io = socketIO(server);
 
-//set port to port 80
+
 const PORT = 80;
 
-app.set("port", (process.env.PORT || PORT));
+app.set("port", (process.env.PORT || PORT)); //set port to port 80
 
 app.use("/static", express.static(__dirname + "/static"));
 
-//each of the app.get funcs below server the html to the client
 app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "index.html"));
 });
@@ -80,7 +78,6 @@ r_list = []
 var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
     console.log("connection made");
-
     socket.on("newClient", function(){
       console.log("new connection");
     });
@@ -123,7 +120,6 @@ io.on("connection", function(socket) {
       // emit the list of rooms to client for display
       socket.emit("giveRooms", display_rooms);
     });
-
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
