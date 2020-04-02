@@ -87,7 +87,7 @@ io.on("connection", function(socket) {
 
     socket.on("autoMatch", function(){
 
-      game_start_state = checkRooms(socket, free_rooms);
+      var game_start_state = checkRooms(socket, free_rooms);
 
       socket.emit("clearScreen","cls");
       if (game_start_state){
@@ -103,8 +103,8 @@ io.on("connection", function(socket) {
     socket.on("getRooms", function() {
       console.log("Sending list of rooms to client!");
 
-      display_rooms = []
-      rooms = io.sockets.adapter.rooms;
+      var display_rooms = [];
+      var rooms = io.sockets.adapter.rooms;
       var r_name;
       var r_length;
       for(i=0; i<r_list.length; i++){

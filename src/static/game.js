@@ -236,6 +236,7 @@ function render() {
   renderer.render( scene, camera );
 }
 
+
 //setting up three.js scene
 function init() {
   container = document.querySelector('#scene-container');
