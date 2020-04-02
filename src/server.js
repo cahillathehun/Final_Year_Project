@@ -121,7 +121,8 @@ io.on("connection", function(socket) {
 
       var display_rooms = [];
       var rooms = io.sockets.adapter.rooms;
-      var r_name;
+      var r;
+      var i;
       var r_length;
 
       // iterate through room list
@@ -163,5 +164,3 @@ io.on("connection", function(socket) {
       console.log("clients: ", clients);
     });
 });
-
-export default checkRooms;
