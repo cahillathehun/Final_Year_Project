@@ -6,28 +6,21 @@
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
     "stats.js": "^0.17.0",
-    "three": "^0.112.1",
-    "uuid": "^7.0.3"
+    "three": "^0.112.1"
   },
   "main": "server.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo this call should start tests",
+    "start": "nodemon --exec babel-node ./src/server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.computing.dcu.ie:cahila23/2020-ca400-cahila23-ocearbl2.git"
-  },
-  "keywords": [
-    "nodejs",
-    "multiplayer",
-    "socketio",
-    "websockets",
-    "boids"
-  ],
-  "author": "Alex Cahill & Liam Ó Cearbhaill",
-  "license": "ISC"
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
+    "mocha": "^7.1.1",
+    "nodemon": "^2.0.2"
+  }
 }
