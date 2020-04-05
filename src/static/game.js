@@ -1,8 +1,6 @@
-$.getScript ( "socketio.js", function() {
-  var socket = io.connect("localhost:80");
-});
-
-// var socket = io();
+// var Stats = require('stats.js');
+var socket = require("socket.io")();
+var THREE = require("three");
 let container;
 let camera;
 let controls;

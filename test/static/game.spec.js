@@ -1,4 +1,4 @@
-import autoMatch from "../../src/static/game.js";
+// import autoMatch from "../../src/static/game.js";
 // import createStyle from "../../src/static/game";
 // import createRoomsList from "../../src/static/game";
 // import createChat from "../../src/static/game";
