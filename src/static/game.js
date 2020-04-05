@@ -1,6 +1,4 @@
-// var Stats = require('stats.js');
-var socket = require("socket.io")();
-var THREE = require("three");
+var socket = io();
 let container;
 let camera;
 let controls;
