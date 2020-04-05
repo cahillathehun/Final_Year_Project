@@ -8,7 +8,6 @@ let scene;
 
 // SOCKET STUFF //
 
-var roomList = []
 
 function autoMatch(){
   // function for auto matchmaking
@@ -27,7 +26,6 @@ function createStyle () {
 }
 
 function createRoomsList(rooms) {
-  roomList = rooms;
   // strings used for string building below for writing into the div html element
   // TODO make list of rooms look nicer
 
