@@ -162,3 +162,5 @@ io.on("connection", function(socket) {
       console.log("clients: ", clients);
     });
 });
+
+export default checkRooms;
