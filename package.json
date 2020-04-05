@@ -5,12 +5,13 @@
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
+    "stats-js": "^1.0.1",
     "stats.js": "^0.17.0",
     "three": "^0.112.1"
   },
   "main": "server.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha --require @babel/register",
+    "test": "./node_modules/.bin/mocha --recursive --require @babel/register ",
     "start": "nodemon --exec babel-node ./src/server.js"
   },
   "devDependencies": {

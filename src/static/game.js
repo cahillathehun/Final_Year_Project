@@ -1,4 +1,6 @@
-var socket = io();
+// var Stats = require('stats.js'); 
+var socket = require("socket.io")();
+var THREE = require("three");
 let container;
 let camera;
 let controls;
@@ -482,3 +484,19 @@ function init() {
     });
   }
 }
+
+export default autoMatch;
+// export default createStyle;
+// export default createRoomsList;
+// export default createChat;
+// export default clearMain;
+// export default handleOrientation;
+// export default mousemove;
+// export default onWindowResize;
+// export default createCamera;
+// export default createLights;
+// export default createRenderer;
+// export default loadMods;
+// export default update;
+// export default render;
+// export default init;
