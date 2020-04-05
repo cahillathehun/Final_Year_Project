@@ -18,3 +18,5 @@ Matchmaking will pair two users together at a time
 From a developers perspective:
 
 start server using 'sudo npm start'
+
+start tests using 'sudo npm run test'
