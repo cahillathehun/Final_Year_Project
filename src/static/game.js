@@ -101,6 +101,7 @@ socket.on("startGame", function(rid) {
 const mixers = []
 const clock = new THREE.Clock();
 
+
 socket.emit("newPlayer");
 
 //stats tracking, displays in top right corner
@@ -158,6 +159,10 @@ function createCamera() {
   camera.position.x = -50;
   camera.position.y = 50;
   camera.position.z = 1200;
+  camera.updateMatrix();
+  camera.updateMatrixWorld();
+  frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
+
 }
 
 //init lights
@@ -209,11 +214,12 @@ function loadMods() {
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
-  console.log(models);
+  //console.log(models);
 
 
 }
 
+var frustum = new THREE.Frustum();
 
 //func for updating animations
 function update() {
@@ -224,11 +230,22 @@ function update() {
   }
 
   if(models.length > 0){
-    for(const model of models){
-      model.rotateX(getRandomNum(-0.05, 0.05));
-      model.rotateY(getRandomNum(-0.05, 0.05));
-      model.rotateZ(getRandomNum(-0.05, 0.05));
-      model.translateZ(5);
+    var exits = [];
+
+    console.log(models);
+    for(i=0; i<models.length; i++){
+      models[i].rotateX(getRandomNum(-0.05, 0.05));
+      models[i].rotateY(getRandomNum(-0.05, 0.05));
+      models[i].rotateZ(getRandomNum(-0.05, 0.05));
+      models[i].translateZ(5);
+
+      if( (frustum.intersectsObject(models[i])) ){
+        console.log("pass");
+      } else {
+        exits.push(models[i]);
+        models.splice(i, 1);
+        console.log("exit occured");
+      }
     }
   }
 }
