@@ -124,8 +124,10 @@ io.on("connection", function(socket) {
 
     socket.on("modelExits", (models) => {
       // receive list of exiting models
-      // TODO: send list of exited models to other client
-      console.log(models);
+      // console.log(models);
+      let socket_and_room = Object.keys(socket.rooms);
+      let room = socket_and_room[1];
+      socket.to(room).emit("modelEntries", models);
     })
     io.clients((error, clients) => {
       if(error) throw error;

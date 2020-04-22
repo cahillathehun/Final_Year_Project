@@ -33,6 +33,7 @@ socket.on("giveRooms", function(rooms) {
 });
 
 socket.on("clearScreen", function(rooms) {
+  // calls functions to clear the screen and setup for rendering the models
   clearMain("main");
   createStyle();
   createChat("main");
@@ -40,10 +41,15 @@ socket.on("clearScreen", function(rooms) {
 
 
 socket.on("startGame", function(rid) {
+  // tells the client to start rendering
   console.log("starting game in room: ", rid);
   init();
 });
 
+socket.on("modelEntries", function(entries) {
+  console.log("models entering environment!");
+  console.log(entries);
+})
 
 /*
 
@@ -290,6 +296,8 @@ function init() {
   createLights();
   loadMods();
   createRenderer();
+
+  // TODO: maybe think about splitting this up into init() and startGame()?
 
   renderer.setAnimationLoop ( () => {
     // rendering and animation loop
