@@ -47,8 +47,8 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("modelEntries", function(entries) {
-  console.log("models entering environment!");
-  console.log(entries);
+  console.log(entries.length, " models ENTERING environment!");
+  // addMods(entries);
 })
 
 /*
@@ -207,35 +207,42 @@ function createRenderer() {
 
 }
 
-var models = []; // lists of models to be rendered
-function loadMods() {
+const onProgress = () => {};
+function addMods(entries) {
   // func for loading the .glb models and adding to the three.js scene
-  const lodr = new THREE.GLTFLoader();
+  for(i=0; i<entries.length; i++){
+    // iterate through entries array and add to scene in the right place
+    entry = entries[i];
+  }
+}
 
-  const onLoad =(gltf, pos) => {
-    var obj = gltf.scene.children[0];
-    obj.position.copy(pos);
+var models = []; // lists of models to be rendered
+function onLoad(gltf, pos) {
+  // func adds models to scene & models array and also adds animation to mixer array
+  var obj = gltf.scene.children[0];
+  obj.position.copy(pos);
 
-    const animation = gltf.animations[0];
+  const animation = gltf.animations[0];
 
-    const mixer = new THREE.AnimationMixer(obj);
-    mixers.push(mixer);
+  const mixer = new THREE.AnimationMixer(obj);
+  mixers.push(mixer);
 
-    const action = mixer.clipAction(animation);
-    action.play();
-    models.push(obj);
-    scene.add(obj);
-  };
+  const action = mixer.clipAction(animation);
+  action.play();
+  models.push(obj);
+  scene.add(obj);
+}
 
-  const onProgress = () => {};
-
+const lodr = new THREE.GLTFLoader();
+function initMods() {
+  // func for loading the initial set of .glb models & adding to three.js scene
+  const init_mods_amt = 100;
   const onError = (errorMsg) => {console.error(errorMsg);};
-
-  var z = 0;
-  for(i=0;i<5;i++){
+  for(i=0; i<init_mods_amt; i++){
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
+
 }
 
 function getRandomNum(min, max){
@@ -263,19 +270,21 @@ function update() {
   if(models.length > 0){
     var exits = [];
 
-    console.log(models);
+    // console.log(models);
     for(i=0; i<models.length; i++){
       movement(models[i]);
 
       if( ! (frustum.intersectsObject(models[i])) ){
         exits.push(models[i]);
         models.splice(i, 1);
-        console.log("exit occured");
+        mixers.splice(i, 1);
+
       }
     }
   // TODO: write socket function to send list of exits to server/other client
     if(exits.length > 0){
       socket.emit("modelExits", exits);
+      console.log(exits.length, "models EXITING environment!")
     }
   }
 }
@@ -294,7 +303,7 @@ function init() {
 
   createCamera();
   createLights();
-  loadMods();
+  initMods();
   createRenderer();
 
   // TODO: maybe think about splitting this up into init() and startGame()?

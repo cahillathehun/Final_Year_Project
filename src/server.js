@@ -124,7 +124,9 @@ io.on("connection", function(socket) {
 
     socket.on("modelExits", (models) => {
       // receive list of exiting models
-      // console.log(models);
+      // console.log("exits occured: ", models[0]["object"]);
+      // console.log("exits occured: ", models.length);
+
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
       socket.to(room).emit("modelEntries", models);
