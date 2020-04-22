@@ -6,14 +6,53 @@ let renderer;
 let scene;
 
 
-// SOCKET STUFF //
+/*
+STATS TRACKING
 
+mainly just used for testing to show fps, latency and mem usage
+*/
+var stats = new Stats();
+stats.showPanel(0, 1, 2, 3);
+document.body.appendChild(stats.dom);
+
+// SOCKET STUFF //
 
 function autoMatch(){
   // function for auto matchmaking
   console.log("auto matchmaking player");
   socket.emit("autoMatch");
 }
+
+socket.emit("getRooms");    //tells the server it wants a list of the rooms
+
+socket.emit("newPlayer");
+
+socket.on("giveRooms", function(rooms) {
+  // calls createRoomsList when client hears "giveRoom" msg from server
+  createRoomsList(rooms);
+});
+
+socket.on("clearScreen", function(rooms) {
+  clearMain("main");
+  createStyle();
+  createChat("main");
+});
+
+
+socket.on("startGame", function(rid) {
+  console.log("starting game in room: ", rid);
+  init();
+});
+
+
+/*
+
+// HTML & CSS //
+
+html is re-written on the web page to avoid any problems with routing and matchmaking with
+sockets as a new socketID is given to a client when they load a completely new html page
+
+*/
 
 function createStyle () {
   // func for writing css to head of play.html
@@ -51,6 +90,7 @@ function createRoomsList(rooms) {
 function createChat(elementID){
   // func for creating chat box on screen
   // TODO make chat bar look nicer
+  // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
   div.innerHTML = '<ul id="messages"></ul> <form action=""> <input id="m" autocomplete="off"/> <button>Send</button> </form>';
@@ -66,54 +106,12 @@ function clearMain(elementID) {
 
 }
 
-socket.emit("getRooms");    //tells the server it wants a list of the rooms
+/*
 
-socket.on("giveRooms", function(rooms) {
-  // calls createRoomsList when client hears "giveRoom" msg from server
-  createRoomsList(rooms);
-});
+// EVENT LISTENERS //
 
+*/
 
-socket.on("clearScreen", function(rooms) {
-  clearMain("main");
-  createStyle();
-  createChat("main");
-});
-
-
-socket.on("startGame", function(rid) {
-  console.log("starting game in room: ", rid);
-  // TODO: create startGame Function
-  // startGame();
-  //start loop
-  init();
-});
-
-
-
-
-
-
-
-
-// GLTF & THREE.JS STUFF //
-
-const mixers = []
-const clock = new THREE.Clock();
-
-
-socket.emit("newPlayer");
-
-//stats tracking, displays in top right corner
-var stats = new Stats();
-stats.showPanel(0, 1, 2, 3);
-document.body.appendChild(stats.dom);
-
-function getRandomNum(min, max){
-  return Math.random() * (max - min) + min;
-}
-
-//device orientation tracking
 var accel_x;
 var accel_y;
 function handleOrientation(event) {
@@ -126,7 +124,6 @@ function handleOrientation(event) {
 window.addEventListener("deviceorientation", handleOrientation, true);
 
 
-//mouse movement tracking
 var client_x;
 var client_y;
 function mousemove(event){
@@ -138,8 +135,9 @@ function mousemove(event){
 }
 window.addEventListener("mousemove", mousemove, true);
 
-//resizing func
 function onWindowResize() {
+  //window resizing func
+  // TODO: Fix, "cant read clientWidth of null"
   camera.aspect = container.clientWidth / container.clientHeight;
 
   camera.updateProjectionMatrix();
@@ -149,11 +147,28 @@ function onWindowResize() {
 window.addEventListener("resize", onWindowResize);
 
 
+/*
 
+// GLTF & THREE.JS STUFF //
 
+GLTF loader is used to loader .glb models from:
+  /src/static/assets/models/
 
-//init camera
+three.js is used for the rendering and is loaded by:
+  /src/static/play.html
+from:
+  /src/static/scripts/three.js
+it used to be loaded from the official three.js link but was changed
+as loading it locally is faster and more reliable
+
+*/
+
+const mixers = []
+const clock = new THREE.Clock();
+var frustum = new THREE.Frustum();
+
 function createCamera() {
+  //init camera
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
 
   camera.position.x = -50;
@@ -165,8 +180,8 @@ function createCamera() {
 
 }
 
-//init lights
 function createLights() {
+  //init lights
   const ambient_light = new THREE.AmbientLight( 0xcccccc );
   scene.add(ambient_light);
 
@@ -176,8 +191,8 @@ function createLights() {
   scene.add( directiona_light );
 }
 
-//init renderer
 function createRenderer() {
+  //init renderer
   renderer = new THREE.WebGLRenderer({antialias: true});
   renderer.setSize( window.innerWidth, window.innerHeight );
   renderer.setPixelRatio( window.devicePixelRatio );
@@ -188,6 +203,7 @@ function createRenderer() {
 
 var models = []; // lists of models to be rendered
 function loadMods() {
+  // func for loading the .glb models and adding to the three.js scene
   const lodr = new THREE.GLTFLoader();
 
   const onLoad =(gltf, pos) => {
@@ -210,19 +226,28 @@ function loadMods() {
   const onError = (errorMsg) => {console.error(errorMsg);};
 
   var z = 0;
-  for(i=0;i<100;i++){
+  for(i=0;i<5;i++){
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
   }
-  //console.log(models);
-
-
 }
 
-var frustum = new THREE.Frustum();
+function getRandomNum(min, max){
+  return Math.random() * (max - min) + min;
+}
 
-//func for updating animations
+function movement(model) {
+  // function for updating movement in the environment
+  // TODO: write the boid logic here
+  model.rotateX(getRandomNum(-0.05, 0.05));
+  model.rotateY(getRandomNum(-0.05, 0.05));
+  model.rotateZ(getRandomNum(-0.05, 0.05));
+  model.translateZ(5);
+}
+
+
 function update() {
+  //func for updating animations
   const delta = clock.getDelta();
 
   for (const mixer of mixers) {
@@ -234,31 +259,29 @@ function update() {
 
     console.log(models);
     for(i=0; i<models.length; i++){
-      models[i].rotateX(getRandomNum(-0.05, 0.05));
-      models[i].rotateY(getRandomNum(-0.05, 0.05));
-      models[i].rotateZ(getRandomNum(-0.05, 0.05));
-      models[i].translateZ(5);
+      movement(models[i]);
 
-      if( (frustum.intersectsObject(models[i])) ){
-        console.log("pass");
-      } else {
+      if( ! (frustum.intersectsObject(models[i])) ){
         exits.push(models[i]);
         models.splice(i, 1);
         console.log("exit occured");
       }
     }
+  // TODO: write socket function to send list of exits to server/other client
+    if(exits.length > 0){
+      socket.emit("modelExits", exits);
+    }
   }
 }
 
-//func for rendering mods
 function render() {
+  //func for rendering mods
   renderer.render( scene, camera );
-
 }
 
 
-//setting up three.js scene
 function init() {
+  //setting up three.js scene
   container = document.querySelector('#scene-container');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);

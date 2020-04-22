@@ -79,11 +79,11 @@ var free_rooms = [];   //list of rooms with only one client in it, used for auto
 io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
-      console.log("new connection");
+    console.log("new connection");
     });
 
     socket.on("autoMatch", function(){
-
+      // start the auto-matchmaking for the client
       var game_start_state = checkRooms(socket, free_rooms);
 
       socket.emit("clearScreen","cls");
@@ -98,6 +98,7 @@ io.on("connection", function(socket) {
     });
 
     socket.on("getRooms", function() {
+      // collates list of rooms and sends them to the client for displaying
       console.log("Sending list of rooms to client!");
 
       var display_rooms = [];
@@ -120,6 +121,12 @@ io.on("connection", function(socket) {
       // emit the list of rooms to client for display
       socket.emit("giveRooms", display_rooms);
     });
+
+    socket.on("modelExits", (models) => {
+      // receive list of exiting models
+      // TODO: send list of exited models to other client
+      console.log(models);
+    })
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
