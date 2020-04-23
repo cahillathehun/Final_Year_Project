@@ -14,7 +14,7 @@ var options = {
 
 var room = 'lobby';
 
-describe('Sockets', function () {  
+describe('Matchmake test', function () {  
     var client1, client2, client3;
   
     // testing goodness goes here
