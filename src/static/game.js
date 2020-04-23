@@ -23,6 +23,18 @@ function autoMatch(){
   socket.emit("autoMatch");
 }
 
+function chatMsg(){
+  var form = document.getElementById("myForm");
+  function handleForm(event) { event.preventDefault(); }
+  form.addEventListener("submit", handleForm);
+
+  var input_field = document.getElementById("m");
+  var msg = input_field.value;
+  console.log(msg);
+  socket.emit("chatMessage", msg);
+  input_field.value = "";
+}
+
 socket.emit("getRooms");    //tells the server it wants a list of the rooms
 
 socket.emit("newPlayer");
@@ -38,7 +50,6 @@ socket.on("clearScreen", function(rooms) {
   createStyle();
   createChat("main");
 });
-
 
 socket.on("startGame", function(rid) {
   // tells the client to start rendering
@@ -99,7 +110,7 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form action=""> <input id="m" autocomplete="off"/> <button>Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input placeholder="..."  id="m" autocomplete="off"/> <button onclick="chatMsg(messages)">Send</button> </form>';
 }
 
 function clearMain(elementID) {

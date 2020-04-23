@@ -130,7 +130,15 @@ io.on("connection", function(socket) {
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
       socket.to(room).emit("modelEntries", models);
+    });
+
+    socket.on("chatMessage", function(msg) {
+      let socket_and_room = Object.keys(socket.rooms);
+      let room = socket_and_room[1];
+      console.log(msg);
+      // io.to(room).emit("chatMessage", msg);
     })
+
     io.clients((error, clients) => {
       if(error) throw error;
       console.log(clients);
