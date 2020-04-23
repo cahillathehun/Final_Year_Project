@@ -18,13 +18,13 @@ describe('Sockets', function () {
     var client1, client2, client3;
   
     // testing goodness goes here
-    it('should send and receive a message', function (done) {  
+    it('should send and receive a message(autoMatch)', function (done) {  
         // Set up client1 connection
         client1 = io.connect(socketUrl, options);
     
         // Set up event listener.  This is the actual test we're running
         client1.on('message', function(msg){
-          expect(msg).to.equal('test');
+          expect(msg).to.equal('autoMatch');
     
           // Disconnect both client connections
           client1.disconnect();
@@ -42,7 +42,7 @@ describe('Sockets', function () {
     
             // Emit event when all clients are connected.
             client2.emit('join room', room);
-            client2.emit('message', 'test');
+            client2.emit('message', 'autoMatch');
             done();
           });
     
