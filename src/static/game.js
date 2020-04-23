@@ -17,6 +17,48 @@ document.body.appendChild(stats.dom);
 
 // SOCKET STUFF //
 
+socket.emit("getRooms");    //tells the server it wants a list of the rooms
+
+socket.emit("newPlayer");   // tells server a new player has joined
+
+
+/*
+socket.io funcs that listening for emits
+listed in order in which they usually occur
+*/
+socket.on("giveRooms", function(rooms) {
+  // calls createRoomsList when client hears "giveRoom" msg from server
+  createRoomsList(rooms);
+});
+
+socket.on("clearScreen", function(rooms) {
+  // calls functions to clear the screen and setup for rendering the models when client hear "clearScreen" emit from server
+  clearMain("main");
+  createStyle();
+  createChat("main");
+});
+
+socket.on("startGame", function(rid) {
+  // starts running the game when it hears the "startGame" emit from the server
+  console.log("starting game in room: ", rid);
+  init();
+});
+
+socket.on("chatMessage", function(msg){
+  console.log("chat msg received: ", msg, " time to display on screen");
+  writeChat(msg);
+});
+
+socket.on("modelEntries", function(entries) {
+  // func that tells the client to start rendering new models as they have crossed into their environment
+  console.log(entries.length, " models ENTERING environment!");
+  // addMods(entries);
+})
+
+/*
+some funcs that emit socket.io events
+*/
+
 function autoMatch(){
   // function for auto matchmaking
   console.log("auto matchmaking player");
@@ -24,43 +66,18 @@ function autoMatch(){
 }
 
 function chatMsg(){
+  // func for sending chat msgs to opponent
+
+  // following three lines prevent the page from being reloaded after submitting
   var form = document.getElementById("myForm");
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener("submit", handleForm);
 
-  var input_field = document.getElementById("m");
+  var input_field = document.getElementById("chat_bar");
   var msg = input_field.value;
-  console.log(msg);
   socket.emit("chatMessage", msg);
-  input_field.value = "";
+  input_field.value = "";   // reset the chat bar so it's blank again
 }
-
-socket.emit("getRooms");    //tells the server it wants a list of the rooms
-
-socket.emit("newPlayer");
-
-socket.on("giveRooms", function(rooms) {
-  // calls createRoomsList when client hears "giveRoom" msg from server
-  createRoomsList(rooms);
-});
-
-socket.on("clearScreen", function(rooms) {
-  // calls functions to clear the screen and setup for rendering the models
-  clearMain("main");
-  createStyle();
-  createChat("main");
-});
-
-socket.on("startGame", function(rid) {
-  // tells the client to start rendering
-  console.log("starting game in room: ", rid);
-  init();
-});
-
-socket.on("modelEntries", function(entries) {
-  console.log(entries.length, " models ENTERING environment!");
-  // addMods(entries);
-})
 
 /*
 
@@ -110,7 +127,14 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input placeholder="..."  id="m" autocomplete="off"/> <button onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input placeholder="..."  id="chat_bar" autocomplete="off"/> <button onclick="chatMsg(messages)">Send</button> </form>';
+}
+
+function writeChat(msg){
+  // function to write chat msg to screen(html)
+  // TODO: finish writing chat feature
+  console.log(msg);
+  return;
 }
 
 function clearMain(elementID) {

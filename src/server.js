@@ -79,7 +79,6 @@ var free_rooms = [];   //list of rooms with only one client in it, used for auto
 io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
-    console.log("new connection");
     });
 
     socket.on("autoMatch", function(){
@@ -135,12 +134,11 @@ io.on("connection", function(socket) {
     socket.on("chatMessage", function(msg) {
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
-      console.log(msg);
-      // io.to(room).emit("chatMessage", msg);
+      io.to(room).emit("chatMessage", msg);
     })
 
     io.clients((error, clients) => {
       if(error) throw error;
-      console.log(clients);
+      console.log("clients: ", clients);
     });
 });
