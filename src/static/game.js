@@ -7,13 +7,18 @@ let scene;
 
 
 /*
-STATS TRACKING
 
-mainly just used for testing to show fps, latency and mem usage
+/// DEV REQUIREMENTS ///
+
+STATS TRACKING mainly just used for testing to show fps, latency and mem usage
+
+
 */
-var stats = new Stats();
-stats.showPanel(0, 1, 2, 3);
-document.body.appendChild(stats.dom);
+const DEV = false;
+
+
+
+
 
 // SOCKET STUFF //
 
@@ -271,7 +276,7 @@ function onLoad(gltf, pos) {
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 100;
+  const init_mods_amt = 3;
   const onError = (errorMsg) => {console.error(errorMsg);};
   for(i=0; i<init_mods_amt; i++){
     // only using parrot model for now
@@ -291,8 +296,14 @@ function movement(model) {
   model.rotateY(getRandomNum(-0.05, 0.05));
   model.rotateZ(getRandomNum(-0.05, 0.05));
   model.translateZ(5);
+  // console.log(model.position)
 }
 
+function addMods(entry_mods) {
+  console.log(entry_mods)
+  // models = models.concat(entry_mods); // simply adding the entering models into the models array does not work as models are converted to json changing their format so new models have to be created as expected
+  console.log(models);
+}
 
 function update() {
   //func for updating animations
@@ -313,8 +324,8 @@ function update() {
         exits.push(models[i]);
         models.splice(i, 1);
         mixers.splice(i, 1);
-
       }
+
     }
   // TODO: write socket function to send list of exits to server/other client
     if(exits.length > 0){
@@ -336,18 +347,40 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
 
-  createCamera();
-  createLights();
-  initMods();
-  createRenderer();
+  if(DEV == true){
+    var stats = new Stats();
+    stats.showPanel(0, 1, 2, 3);
+    document.body.appendChild(stats.dom);
+    createCamera();
+    createLights();
+    initMods();
+    createRenderer();
 
-  // TODO: maybe think about splitting this up into init() and startGame()?
+    // TODO: maybe think about splitting this up into init() and startGame()?
 
-  renderer.setAnimationLoop ( () => {
-    // rendering and animation loop
-    stats.begin();
-    update();
-    render();
-    stats.end();
-  });
+    renderer.setAnimationLoop ( () => {
+      // rendering and animation loop
+      stats.begin();
+      update();
+      render();
+      stats.end();
+    });
+
+
+  } else {
+    createCamera();
+    createLights();
+    initMods();
+    createRenderer();
+
+    // TODO: maybe think about splitting this up into init() and startGame()?
+
+    renderer.setAnimationLoop ( () => {
+      // rendering and animation loop
+
+      update();
+      render();
+
+    });
+  }
 }
