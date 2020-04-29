@@ -153,6 +153,12 @@ function clearMain(elementID) {
 
 }
 
+function scoreDisp(score) {
+  // TODO: write function that displays score to each player
+
+  return false;
+}
+
 /*
 
 // EVENT LISTENERS //
@@ -301,7 +307,11 @@ function movement(model) {
   model.rotateY(getRandomNum(-0.05, 0.05));
   model.rotateZ(getRandomNum(-0.05, 0.05));
   model.translateZ(5);
-  // console.log(model.position)
+}
+
+function scoreCalc(){
+  // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
+  return false;
 }
 
 function addMods(entry_mods) {
@@ -309,7 +319,6 @@ function addMods(entry_mods) {
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
   const onError = (errorMsg) => {console.error(errorMsg);};
-  // console.log("entries: ", entry_mods);
 
   for(i=0; i<entry_mods.length;i++){
     // get positions and rotations and create new birdie
@@ -334,11 +343,12 @@ function update() {
   if(models.length > 0){
     var exits = [];
 
-    // console.log(models);
+
     for(i=0; i<models.length; i++){
       movement(models[i]);
 
       if( ! (frustum.intersectsObject(models[i])) ){
+        // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
         const info = {
           position: {},
           rotation: {}
@@ -348,7 +358,7 @@ function update() {
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
         info.rotation = models[i].rotation;
-        // console.log(info);
+
         exits.push(info);
         models.splice(i, 1);
         mixers.splice(i, 1);
