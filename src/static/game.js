@@ -57,7 +57,8 @@ socket.on("chatMessage", function(msg){
 socket.on("modelEntries", function(entries) {
   // func that tells the client to start rendering new models as they have crossed into their environment
   console.log(entries.length, " models ENTERING environment!");
-  // addMods(entries);
+  // console.log(entries);
+  addMods(entries);
 })
 
 /*
@@ -257,11 +258,15 @@ function addMods(entries) {
 }
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos) {
+function onLoad(gltf, pos, rot) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
   obj.position.copy(pos);
-
+  if(rot != false){
+    obj.rotateX(rot._x);
+    obj.rotateY(rot._y);
+    obj.rotateZ(rot._z);
+  }
   const animation = gltf.animations[0];
 
   const mixer = new THREE.AnimationMixer(obj);
@@ -280,7 +285,7 @@ function initMods() {
   const onError = (errorMsg) => {console.error(errorMsg);};
   for(i=0; i<init_mods_amt; i++){
     // only using parrot model for now
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300))), onProgress, onError);
+    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
   }
 
 }
@@ -300,9 +305,22 @@ function movement(model) {
 }
 
 function addMods(entry_mods) {
-  console.log(entry_mods)
-  // models = models.concat(entry_mods); // simply adding the entering models into the models array does not work as models are converted to json changing their format so new models have to be created as expected
-  console.log(models);
+  // function for adding new models to the Scene
+  // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
+
+  const onError = (errorMsg) => {console.error(errorMsg);};
+  // console.log("entries: ", entry_mods);
+
+  for(i=0; i<entry_mods.length;i++){
+    // get positions and rotations and create new birdie
+    console.log(entry_mods[i].position.x);
+    var x = entry_mods[i].position.x;
+    var y = entry_mods[i].position.y;
+    var z = entry_mods[i].position.z;
+    var rots = entry_mods[i].rotation;
+
+    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rots), onProgress, onError);
+  }
 }
 
 function update() {
@@ -321,16 +339,26 @@ function update() {
       movement(models[i]);
 
       if( ! (frustum.intersectsObject(models[i])) ){
-        exits.push(models[i]);
+        const info = {
+          position: {},
+          rotation: {}
+        };
+        console.log(models[i].position);
+        info.position.x = (models[i].position.x * -1.0);
+        info.position.y = (models[i].position.y * -1.0);
+        info.position.z = (models[i].position.z * -1.0);
+        info.rotation = models[i].rotation;
+        // console.log(info);
+        exits.push(info);
         models.splice(i, 1);
         mixers.splice(i, 1);
       }
 
     }
-  // TODO: write socket function to send list of exits to server/other client
+
     if(exits.length > 0){
       socket.emit("modelExits", exits);
-      console.log(exits.length, "models EXITING environment!")
+      console.log(exits.length, "models EXITING environment!");
     }
   }
 }

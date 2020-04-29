@@ -1,6 +1,6 @@
 
 //dependencies
-// const uuid = require("uuid/v1")
+// const uuid = require("uuid/v1")    // now depreciated
 const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 const http = require("http");
