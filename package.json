@@ -6,7 +6,8 @@
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
     "stats-js": "^1.0.1",
-    "three": "^0.112.1"
+    "three": "^0.112.1",
+    "uuid": "^7.0.3"
   },
   "main": "server.js",
   "scripts": {
@@ -20,7 +21,7 @@
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.9.0",
     "chai": "^4.2.0",
-    "mocha": "^7.1.1",
+    "mocha": "^7.1.2",
     "nodemon": "^2.0.2",
     "sinon": "^9.0.2",
     "socket-tester": "^1.2.1",
