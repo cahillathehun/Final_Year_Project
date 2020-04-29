@@ -14,3 +14,6 @@ node_modules/
 
 # Ignore IntelliJ extra files
 .idea
+
+*.kdev4
+.kdev4
