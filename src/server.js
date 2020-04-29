@@ -1,6 +1,7 @@
 
 //dependencies
-const uuid = require("uuid/v1")
+// const uuid = require("uuid/v1")
+const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -53,7 +54,7 @@ function checkRooms(socket, roomArray) {
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space create a new one
-    const room = uuid();
+    const room = uuidv4();
     r_list.push(room);
     free_rooms.push(room);
     joinRoom(socket, room);
