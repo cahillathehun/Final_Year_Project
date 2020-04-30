@@ -159,6 +159,12 @@ function scoreDisp(score) {
   return false;
 }
 
+function timerDisp(){
+  // TODO: write function to display timer on screen
+
+  return false;
+}
+
 /*
 
 // EVENT LISTENERS //
@@ -296,26 +302,7 @@ function initMods() {
 
 }
 
-function getRandomNum(min, max){
-  return Math.random() * (max - min) + min;
-}
 
-function movement(model) {
-  // function for updating movement in the environment
-  // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.05, 0.05));
-  model.rotateY(getRandomNum(-0.05, 0.05));
-  model.rotateZ(getRandomNum(-0.05, 0.05));
-  model.translateZ(5);
-}
-
-
-var player_score = 0;
-function scoreCalc(){
-  // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
-  player_score += models.length;
-  scoreDisp(player_score);
-}
 
 function addMods(entry_mods) {
   // function for adding new models to the Scene
@@ -376,12 +363,46 @@ function update() {
   }
 }
 
+
+/*
+GENERAL FUNCTIONS
+*/
+
 function render() {
   //func for rendering mods
   renderer.render( scene, camera );
 }
 
+function getRandomNum(min, max){
+  return Math.random() * (max - min) + min;
+}
 
+function movement(model) {
+  // function for updating movement in the environment
+  // TODO: write the boid logic here
+  model.rotateX(getRandomNum(-0.05, 0.05));
+  model.rotateY(getRandomNum(-0.05, 0.05));
+  model.rotateZ(getRandomNum(-0.05, 0.05));
+  model.translateZ(5);
+}
+
+
+var player_score = 0;
+function scoreCalc(){
+  // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
+  player_score += models.length;
+  scoreDisp(player_score);
+}
+
+function timerCalc(){
+  // TODO: write timer function to time the game
+  timerDisp(time);
+  return false;
+}
+
+/*
+MAIN FUNCTION
+*/
 function init() {
   //setting up three.js scene
   container = document.querySelector('#scene-container');
@@ -405,6 +426,7 @@ function init() {
       update();
       render();
       // scoreCalc();
+      // timerCalc();
       stats.end();
     });
 
@@ -423,6 +445,7 @@ function init() {
       update();
       render();
       // scoreCalc();
+      // timerCalc();
 
     });
   }
