@@ -1,5 +1,7 @@
 
-//dependencies
+/*
+DEPENDENCIES
+*/
 // const uuid = require("uuid/v1")    // now depreciated
 const { v4: uuidv4 } = require('uuid');
 const express = require("express");
@@ -11,7 +13,7 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 
-const PORT = 80;
+const PORT = 80;    // default port
 
 app.set("port", (process.env.PORT || PORT)); //set port to port 80
 
@@ -23,10 +25,6 @@ app.get("/", function(req, res) {
 
 app.get("/play", function(req, res) {
     res.sendFile(path.join(__dirname, "/static/play.html"));
-});
-
-app.get("/matchmake", function(req, res) {
-    res.sendFile(path.join(__dirname, "/static/matchmake.html"));
 });
 
 app.get("/settings", function(req, res) {
@@ -45,7 +43,6 @@ async function joinRoom(socket, room) {
   // connect the client to the room
   await socket.join(room);
   console.log(socket.id, "joined", room);
-
 };
 
 
@@ -78,9 +75,8 @@ function checkRooms(socket, roomArray) {
 var r_list = [];
 var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
-    console.log("connection made");
-    socket.on("newClient", function(){
-    });
+    console.log("Connection made!");
+
 
     socket.on("autoMatch", function(){
       // start the auto-matchmaking for the client
@@ -94,7 +90,7 @@ io.on("connection", function(socket) {
     });
 
     socket.on("disconnect", function() {
-      console.log("user disconnected");
+      console.log("User has disconnected")
     });
 
     socket.on("getRooms", function() {
@@ -124,11 +120,11 @@ io.on("connection", function(socket) {
 
     socket.on("modelExits", (models) => {
       // receive list of exiting models
-      // console.log("exits occured: ", models.length);
+
 
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
-      // console.log("exits occured: ", models[0]["object"]);
+
       socket.to(room).emit("modelEntries", models);
     });
 

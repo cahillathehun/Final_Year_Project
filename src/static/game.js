@@ -22,15 +22,15 @@ const DEV = false;
 
 // SOCKET STUFF //
 
-socket.emit("getRooms");    //tells the server it wants a list of the rooms
-
 socket.emit("newPlayer");   // tells server a new player has joined
 
+socket.emit("getRooms");    //tells the server it wants a list of the rooms
 
 /*
 socket.io funcs that listening for emits
 listed in order in which they usually occur
 */
+
 socket.on("giveRooms", function(rooms) {
   // calls createRoomsList when client hears "giveRoom" msg from server
   createRoomsList(rooms);
@@ -114,9 +114,9 @@ function createRoomsList(rooms) {
 
   for(i=0; i<rooms.length; i++){
     var graph = document.createElement("p");      // create paragraph element
-    var rName = rooms[i][0];                   // get the room name
-    var noPlayers = rooms[i][1];    // get number of players in the room
-    console.log("players: ", noPlayers);
+    var rName = rooms[i][0];                      // get the room name
+    var noPlayers = rooms[i][1];                  // get number of players in the room
+
     var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
 
     // below adds the text to the div element
@@ -309,9 +309,12 @@ function movement(model) {
   model.translateZ(5);
 }
 
+
+var player_score = 0;
 function scoreCalc(){
   // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
-  return false;
+  player_score += models.length;
+  scoreDisp(player_score);
 }
 
 function addMods(entry_mods) {
@@ -401,6 +404,7 @@ function init() {
       stats.begin();
       update();
       render();
+      // scoreCalc();
       stats.end();
     });
 
@@ -418,6 +422,7 @@ function init() {
 
       update();
       render();
+      // scoreCalc();
 
     });
   }
