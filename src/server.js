@@ -1,6 +1,7 @@
 
 //dependencies
-
+// const uuid = require("uuid/v1")    // now depreciated
+const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -53,7 +54,7 @@ function checkRooms(socket, roomArray) {
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space create a new one
-    const room = uuid();
+    const room = uuidv4();
     r_list.push(room);
     free_rooms.push(room);
     joinRoom(socket, room);
@@ -74,17 +75,16 @@ function checkRooms(socket, roomArray) {
 
 
 //websocket handling
-r_list = []
+var r_list = [];
 var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
     console.log("connection made");
     socket.on("newClient", function(){
-      console.log("new connection");
     });
 
     socket.on("autoMatch", function(){
-
-      game_start_state = checkRooms(socket, free_rooms);
+      // start the auto-matchmaking for the client
+      var game_start_state = checkRooms(socket, free_rooms);
 
       socket.emit("clearScreen","cls");
       if (game_start_state){
@@ -98,10 +98,11 @@ io.on("connection", function(socket) {
     });
 
     socket.on("getRooms", function() {
+      // collates list of rooms and sends them to the client for displaying
       console.log("Sending list of rooms to client!");
 
-      display_rooms = []
-      rooms = io.sockets.adapter.rooms;
+      var display_rooms = [];
+      var rooms = io.sockets.adapter.rooms;
       var r_name;
       var r_length;
       for(i=0; i<r_list.length; i++){
@@ -120,8 +121,25 @@ io.on("connection", function(socket) {
       // emit the list of rooms to client for display
       socket.emit("giveRooms", display_rooms);
     });
+
+    socket.on("modelExits", (models) => {
+      // receive list of exiting models
+      // console.log("exits occured: ", models.length);
+
+      let socket_and_room = Object.keys(socket.rooms);
+      let room = socket_and_room[1];
+      // console.log("exits occured: ", models[0]["object"]);
+      socket.to(room).emit("modelEntries", models);
+    });
+
+    socket.on("chatMessage", function(msg) {
+      let socket_and_room = Object.keys(socket.rooms);
+      let room = socket_and_room[1];
+      io.to(room).emit("chatMessage", msg);
+    })
+
     io.clients((error, clients) => {
       if(error) throw error;
-      console.log(clients);
+      console.log("clients: ", clients);
     });
 });

@@ -1,11 +1,33 @@
 {
-  "name": "multiUserBoids",
+  "name": "multiuserboids",
   "version": "0.0.1",
   "description": "multiplayer game using boids as animals to be flocked to another player's screen.",
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
     "stats.js": "^0.17.0",
-    "three": "^0.112.1"
-  }
+    "three": "^0.112.1",
+    "uuid": "^7.0.3"
+  },
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.computing.dcu.ie:cahila23/2020-ca400-cahila23-ocearbl2.git"
+  },
+  "keywords": [
+    "nodejs",
+    "multiplayer",
+    "socketio",
+    "websockets",
+    "boids"
+  ],
+  "author": "Alex Cahill & Liam Ó Cearbhaill",
+  "license": "ISC"
 }
