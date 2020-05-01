@@ -41,6 +41,7 @@ socket.on("clearScreen", function(rooms) {
   clearMain("main");
   createStyle();
   createChat("main");
+  createTimer("timer");
 });
 
 socket.on("startGame", function(rid) {
@@ -98,7 +99,7 @@ function createStyle () {
   // func for writing css to head of play.html
   var css = document.createElement("style");
   css.type = "text/css";
-  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 0px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 5px; width: 90%; margin-right: 0.05%; } form button { background: rgb(140, 225, 255); padding: 5px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
+  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 0px; position: fixed; bottom: 0; width: 100%; height: 20px; } form input {	border: 0; padding: 0px; width: 90%; margin-right: 0.05%; height: 100%; } form button { background: rgb(140, 225, 255); padding: 0px; width: 9%; height: 100%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
   var css_text = document.createTextNode(text);
   css.appendChild(css_text);
   document.getElementsByTagName("head")[0].appendChild(css);
@@ -136,6 +137,7 @@ function createChat(elementID){
   div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
 }
 
+
 function writeChat(msg){
   // function to write chat msg to screen(html)
   // TODO: finish writing chat feature
@@ -153,14 +155,14 @@ function clearMain(elementID) {
 
 }
 
+
+function createTimer(elementID){
+  var div = document.getElementById(elementID);
+  var game_length = 60;
+  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
+}
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
-
-  return false;
-}
-
-function timerDisp(){
-  // TODO: write function to display timer on screen
 
   return false;
 }
@@ -386,6 +388,9 @@ function movement(model) {
   model.translateZ(5);
 }
 
+function endGame() {
+  console.log("GAME OVER!");
+}
 
 var player_score = 0;
 function scoreCalc(){
@@ -393,12 +398,12 @@ function scoreCalc(){
   player_score += models.length;
   scoreDisp(player_score);
 }
-
-function timerCalc(){
-  // TODO: write timer function to time the game
-  timerDisp(time);
-  return false;
-}
+//
+// function timerCalc(){
+//   // TODO: write timer function to time the game
+//   timerDisp(time);
+//   return false;
+// }
 
 /*
 MAIN FUNCTION
@@ -417,6 +422,7 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+
 
     // TODO: maybe think about splitting this up into init() and startGame()?
 

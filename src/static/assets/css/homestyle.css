@@ -21,6 +21,8 @@ h2 {
 p {
   text-align:center;
   font-family: Arial;
+  padding: 0;
+  border: none;
 }
 
 a { color: inherit; }
@@ -40,4 +42,21 @@ a:hover {
 
 a:active {
   text-decoration: none;
+}
+
+.button {
+  background-color: #DCDCDC;
+  color: black;
+  transition-duration: 0.4s;
+  border: 2px solid #555555;
+  border-radius: 8px;
+  font-size: 20px;
+  padding: 10px 24px;
+  text-align: center;
+  display: inline-block;
+}
+
+.button:hover{
+  background-color: #555555;
+  color: white;
 }
