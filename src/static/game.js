@@ -86,6 +86,11 @@ function chatMsg(){
   input_field.value = "";   // reset the chat bar so it's blank again
 }
 
+function clientJoinRoom(room_id) {
+  // tell server you want to join a specific room;
+  socket.emit("clientJoin", room_id);
+}
+
 /*
 
 // HTML & CSS //
@@ -113,9 +118,10 @@ function createRoomsList(rooms) {
   var space_string = " ";
   var players_string = "Players: ";
   var btn = document.createElement("button");
-  btn.setAttribute("onclick", "join()");
+  btn.setAttribute("onclick", "clientJoinRoom(room_id)");
   btn.setAttribute("class", "buttonJoin");
   btn.innerHTML = "Join Room";
+
   for(i=0; i<rooms.length; i++){
     var graph = document.createElement("p");      // create paragraph element
 

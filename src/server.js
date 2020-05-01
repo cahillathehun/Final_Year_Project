@@ -77,7 +77,6 @@ var free_rooms = [];   //list of rooms with only one client in it, used for auto
 io.on("connection", function(socket) {
     console.log("Connection made!");
 
-
     socket.on("autoMatch", function(){
       // start the auto-matchmaking for the client
       var game_start_state = checkRooms(socket, free_rooms);
@@ -87,6 +86,10 @@ io.on("connection", function(socket) {
         console.log("told room", game_start_state, "to start their game!")
         io.to(game_start_state).emit("startGame", game_start_state);
       }
+    });
+
+    socket.on("clientJoin", function(room_id) {
+      console.log("added client to room");
     });
 
     socket.on("disconnect", function() {
@@ -101,6 +104,7 @@ io.on("connection", function(socket) {
       var rooms = io.sockets.adapter.rooms;
       var r_name;
       var r_length;
+      // iterate through room list
       for(i=0; i<r_list.length; i++){
         r = r_list[i];
         // check if room in our room list exists anymore
@@ -121,10 +125,10 @@ io.on("connection", function(socket) {
     socket.on("modelExits", (models) => {
       // receive list of exiting models
 
-
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
 
+      // send to other client
       socket.to(room).emit("modelEntries", models);
     });
 
