@@ -98,7 +98,7 @@ function createStyle () {
   // func for writing css to head of play.html
   var css = document.createElement("style");
   css.type = "text/css";
-  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 10px; width: 90%; margin-right: 5%; } form button { background: rgb(140, 225, 255); padding: 10px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
+  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 0px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 5px; width: 90%; margin-right: 0.05%; } form button { background: rgb(140, 225, 255); padding: 5px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
   var css_text = document.createTextNode(text);
   css.appendChild(css_text);
   document.getElementsByTagName("head")[0].appendChild(css);
@@ -133,7 +133,7 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input placeholder="..."  id="chat_bar" autocomplete="off"/> <button onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
 }
 
 function writeChat(msg){
@@ -343,7 +343,7 @@ function update() {
           position: {},
           rotation: {}
         };
-        console.log(models[i].position);
+        // console.log(models[i].position);
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
