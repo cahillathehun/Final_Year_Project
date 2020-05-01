@@ -111,18 +111,23 @@ function createRoomsList(rooms) {
 
   var name_string = "Room name: ";
   var space_string = " ";
-  var players_string = "Players: "
-
+  var players_string = "Players: ";
+  var btn = document.createElement("button");
+  btn.setAttribute("onclick", "join()");
+  btn.setAttribute("class", "buttonJoin");
+  btn.innerHTML = "Join Room";
   for(i=0; i<rooms.length; i++){
     var graph = document.createElement("p");      // create paragraph element
+
     var rName = rooms[i][0];                      // get the room name
     var noPlayers = rooms[i][1];                  // get number of players in the room
 
-    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
+    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
+    graph.appendChild(btn);
     var element = document.getElementById("list_div");
     element.appendChild(graph);
   }

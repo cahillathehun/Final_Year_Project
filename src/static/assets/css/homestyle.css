@@ -44,19 +44,36 @@ a:active {
   text-decoration: none;
 }
 
-.button {
+.buttonAuto {
   background-color: #DCDCDC;
   color: black;
   transition-duration: 0.4s;
   border: 2px solid #555555;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 20px;
-  padding: 10px 24px;
+  padding: 5px 18%;
   text-align: center;
   display: inline-block;
 }
 
-.button:hover{
+.buttonJoin {
+  background-color: #DCDCDC;
+  color: black;
+  transition-duration: 0.4s;
+  border: 2px solid #555555;
+  border-radius: 4px;
+  font-size: 16px;
+  padding: 5px 10px;
+  text-align: center;
+  display: inline-block;
+}
+
+.buttonAuto:hover{
+  background-color: #555555;
+  color: white;
+}
+
+.buttonJoin:hover{
   background-color: #555555;
   color: white;
 }
