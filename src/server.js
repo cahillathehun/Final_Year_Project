@@ -45,15 +45,19 @@ async function joinRoom(socket, room) {
   console.log(socket.id, "joined", room);
 };
 
+function createRoom(){
+  const room = uuidv4();
+  r_list.push(room);
+  free_rooms.push(room);
+}
+
 
 function checkRooms(socket, roomArray) {
 // auto-matchmaking logic
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space create a new one
-    const room = uuidv4();
-    r_list.push(room);
-    free_rooms.push(room);
+    createRoom();
     joinRoom(socket, room);
     return(null);
 
@@ -86,6 +90,12 @@ io.on("connection", function(socket) {
         console.log("told room", game_start_state, "to start their game!")
         io.to(game_start_state).emit("startGame", game_start_state);
       }
+    });
+
+    socket.on("createRoom", function() {
+      // create a room and put this client into it
+      creatRoom();
+      joinRoom(socket, room);
     });
 
     socket.on("clientJoin", function(room_id) {

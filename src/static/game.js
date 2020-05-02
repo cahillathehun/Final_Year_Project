@@ -12,12 +12,9 @@ let scene;
 
 STATS TRACKING mainly just used for testing to show fps, latency and mem usage
 
-
 */
+
 const DEV = false;
-
-
-
 
 
 // SOCKET STUFF //
@@ -56,7 +53,7 @@ socket.on("chatMessage", function(msg){
 });
 
 socket.on("modelEntries", function(entries) {
-  // func that tells the client to start rendering new models as they have crossed into their environment
+  // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
   // console.log(entries);
   addMods(entries);
@@ -67,13 +64,18 @@ some funcs that emit socket.io events
 */
 
 function autoMatch(){
-  // function for auto matchmaking
+  // auto matchmaking
   console.log("auto matchmaking player");
   socket.emit("autoMatch");
 }
 
+function createRoom(){
+  // create own room
+  socket.emit("creatRoom");
+}
+
 function chatMsg(){
-  // func for sending chat msgs to opponent
+  // sends chat msgs
 
   // following three lines prevent the page from being reloaded after submitting
   var form = document.getElementById("myForm");
@@ -87,7 +89,7 @@ function chatMsg(){
 }
 
 function clientJoinRoom(room_id) {
-  // tell server you want to join a specific room;
+  // join specific existing room with space
   socket.emit("clientJoin", room_id);
 }
 
@@ -101,7 +103,7 @@ sockets as a new socketID is given to a client when they load a completely new h
 */
 
 function createStyle () {
-  // func for writing css to head of play.html
+  // writes css to head of play.html
   var css = document.createElement("style");
   css.type = "text/css";
   var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 0px; position: fixed; bottom: 0; width: 100%; height: 20px; } form input {	border: 0; padding: 0px; width: 90%; margin-right: 0.05%; height: 100%; } form button { background: rgb(140, 225, 255); padding: 0px; width: 9%; height: 100%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
@@ -111,18 +113,19 @@ function createStyle () {
 }
 
 function createRoomsList(rooms) {
-  // strings used for string building below for writing into the div html element
+  // write lists of rooms gotten from server to html
+
   // TODO make list of rooms look nicer
 
+  // string building
   var name_string = "Room name: ";
   var space_string = " ";
   var players_string = "Players: ";
-  var btn = document.createElement("button");
-  btn.setAttribute("onclick", "clientJoinRoom(room_id)");
-  btn.setAttribute("class", "buttonJoin");
-  btn.innerHTML = "Join Room";
+
 
   for(i=0; i<rooms.length; i++){
+
+
     var graph = document.createElement("p");      // create paragraph element
 
     var rName = rooms[i][0];                      // get the room name
@@ -133,9 +136,19 @@ function createRoomsList(rooms) {
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
-    graph.appendChild(btn);
+
+    if(noPlayers == 1){
+      // make join buttons for rooms with 1 player in it
+      var btn = document.createElement("button");
+      btn.setAttribute("onclick", "clientJoinRoom(room_id)");
+      btn.setAttribute("class", "buttonJoin");
+      btn.innerHTML = "Join Room";
+      graph.appendChild(btn);
+    }
+
     var element = document.getElementById("list_div");
     element.appendChild(graph);
+
   }
 }
 
@@ -312,7 +325,6 @@ function initMods() {
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
   }
-
 }
 
 
