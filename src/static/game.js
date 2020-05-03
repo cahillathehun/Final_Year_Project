@@ -98,7 +98,7 @@ function clientJoinRoom(room_id) {
 // HTML & CSS //
 
 html is re-written on the web page to avoid any problems with routing and matchmaking with
-sockets as a new socketID is given to a client when they load a completely new html page
+sockets as a new socketID is given to a client when they navigate to a new html page
 
 */
 
@@ -115,7 +115,7 @@ function createStyle () {
 function createRoomsList(rooms) {
   // write lists of rooms gotten from server to html
 
-  // TODO make list of rooms look nicer
+  // TODO make list of rooms look nicer (give names & colours?)
 
   // string building
   var name_string = "Room name: ";
@@ -148,7 +148,6 @@ function createRoomsList(rooms) {
 
     var element = document.getElementById("list_div");
     element.appendChild(graph);
-
   }
 }
 
@@ -176,7 +175,6 @@ function clearMain(elementID) {
   while(div.firstChild) {
     div.removeChild(div.firstChild);
   }
-
 }
 
 
@@ -212,6 +210,7 @@ window.addEventListener("deviceorientation", handleOrientation, true);
 var client_x;
 var client_y;
 function mousemove(event){
+  // TODO: figure out if we need this anymore?
   // function for tracking mouse movement on screen (x,y) coords
   client_x = event.x;
   client_y = event.y;
@@ -221,8 +220,9 @@ function mousemove(event){
 window.addEventListener("mousemove", mousemove, true);
 
 function onWindowResize() {
-  //window resizing func
+  // window resizing func
   // TODO: Fix, "cant read clientWidth of null"
+  // TODO: figure out if needed?
   camera.aspect = container.clientWidth / container.clientHeight;
 
   camera.updateProjectionMatrix();
@@ -403,7 +403,7 @@ function getRandomNum(min, max){
 }
 
 function movement(model) {
-  // function for updating movement in the environment
+  // updates model position
   // TODO: write the boid logic here
   model.rotateX(getRandomNum(-0.05, 0.05));
   model.rotateY(getRandomNum(-0.05, 0.05));
@@ -424,6 +424,7 @@ function scoreCalc(){
 //
 // function timerCalc(){
 //   // TODO: write timer function to time the game
+// // should this be tracked by server?
 //   timerDisp(time);
 //   return false;
 // }

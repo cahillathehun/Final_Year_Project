@@ -86,7 +86,9 @@ io.on("connection", function(socket) {
       // start the auto-matchmaking for the client
       var game_start_state = checkRooms(socket, free_rooms);
 
+      // tell client to clear screen
       socket.emit("clearScreen","cls");
+
       if (game_start_state){
         console.log("told room", game_start_state, "to start their game!")
         io.to(game_start_state).emit("startGame", game_start_state);
@@ -97,6 +99,8 @@ io.on("connection", function(socket) {
       // create a room and put this client into it
       room = createRoom();
       joinRoom(socket, room);
+
+      // tell client to clear screen
       socket.emit("clearScreen","cls");
     });
 
@@ -114,8 +118,8 @@ io.on("connection", function(socket) {
 
       var display_rooms = [];
       var rooms = io.sockets.adapter.rooms;
-      var r_name;
       var r_length;
+
       // iterate through room list
       for(i=0; i<r_list.length; i++){
         r = r_list[i];
