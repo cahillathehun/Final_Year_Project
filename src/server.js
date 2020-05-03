@@ -49,6 +49,7 @@ function createRoom(){
   const room = uuidv4();
   r_list.push(room);
   free_rooms.push(room);
+  return(room);
 }
 
 
@@ -57,7 +58,7 @@ function checkRooms(socket, roomArray) {
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space create a new one
-    createRoom();
+    room = createRoom();
     joinRoom(socket, room);
     return(null);
 
@@ -94,8 +95,9 @@ io.on("connection", function(socket) {
 
     socket.on("createRoom", function() {
       // create a room and put this client into it
-      creatRoom();
+      room = createRoom();
       joinRoom(socket, room);
+      socket.emit("clearScreen","cls");
     });
 
     socket.on("clientJoin", function(room_id) {

@@ -71,7 +71,7 @@ function autoMatch(){
 
 function createRoom(){
   // create own room
-  socket.emit("creatRoom");
+  socket.emit("createRoom");
 }
 
 function chatMsg(){
@@ -141,7 +141,7 @@ function createRoomsList(rooms) {
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
       btn.setAttribute("onclick", "clientJoinRoom(room_id)");
-      btn.setAttribute("class", "buttonJoin");
+      btn.setAttribute("class", "button buttonJoin");
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
     }
