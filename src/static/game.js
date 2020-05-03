@@ -12,25 +12,22 @@ let scene;
 
 STATS TRACKING mainly just used for testing to show fps, latency and mem usage
 
-
 */
+
 const DEV = false;
-
-
-
 
 
 // SOCKET STUFF //
 
-socket.emit("getRooms");    //tells the server it wants a list of the rooms
-
 socket.emit("newPlayer");   // tells server a new player has joined
 
+socket.emit("getRooms");    //tells the server it wants a list of the rooms
 
 /*
 socket.io funcs that listening for emits
 listed in order in which they usually occur
 */
+
 socket.on("giveRooms", function(rooms) {
   // calls createRoomsList when client hears "giveRoom" msg from server
   createRoomsList(rooms);
@@ -41,6 +38,7 @@ socket.on("clearScreen", function(rooms) {
   clearMain("main");
   createStyle();
   createChat("main");
+  createTimer("timer");
 });
 
 socket.on("startGame", function(rid) {
@@ -55,7 +53,7 @@ socket.on("chatMessage", function(msg){
 });
 
 socket.on("modelEntries", function(entries) {
-  // func that tells the client to start rendering new models as they have crossed into their environment
+  // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
   // console.log(entries);
   addMods(entries);
@@ -66,13 +64,18 @@ some funcs that emit socket.io events
 */
 
 function autoMatch(){
-  // function for auto matchmaking
+  // auto matchmaking
   console.log("auto matchmaking player");
   socket.emit("autoMatch");
 }
 
+function createRoom(){
+  // create own room
+  socket.emit("createRoom");
+}
+
 function chatMsg(){
-  // func for sending chat msgs to opponent
+  // sends chat msgs
 
   // following three lines prevent the page from being reloaded after submitting
   var form = document.getElementById("myForm");
@@ -85,43 +88,64 @@ function chatMsg(){
   input_field.value = "";   // reset the chat bar so it's blank again
 }
 
+function clientJoinRoom(rName) {
+  // join specific existing room with space
+  socket.emit("clientJoin", rName);
+}
+
 /*
 
 // HTML & CSS //
 
 html is re-written on the web page to avoid any problems with routing and matchmaking with
-sockets as a new socketID is given to a client when they load a completely new html page
+sockets as a new socketID is given to a client when they navigate to a new html page
 
 */
 
 function createStyle () {
-  // func for writing css to head of play.html
+  // writes css to head of play.html
   var css = document.createElement("style");
   css.type = "text/css";
-  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; } form input {	border: 0; padding: 10px; width: 90%; margin-right: 5%; } form button { background: rgb(140, 225, 255); padding: 10px; width: 9%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
+  var text = "body { margin: 0; } canvas {  width: 100%; height: 100%; } form {  background: #000; padding: 0px; position: fixed; bottom: 0; width: 100%; height: 20px; } form input {	border: 0; padding: 0px; width: 90%; margin-right: 0.05%; height: 100%; } form button { background: rgb(140, 225, 255); padding: 0px; width: 9%; height: 100%; border: none; } #messages { list-style-type: none; margin: 0; padding: 0; } #messages li { padding: 5px 10px; } #messages li:nth-child(odd) { background: #eee; }";
   var css_text = document.createTextNode(text);
   css.appendChild(css_text);
   document.getElementsByTagName("head")[0].appendChild(css);
 }
 
 function createRoomsList(rooms) {
-  // strings used for string building below for writing into the div html element
-  // TODO make list of rooms look nicer
+  // write lists of rooms gotten from server to html
 
+  // TODO make list of rooms look nicer (give names & colours?)
+
+  // string building
   var name_string = "Room name: ";
   var space_string = " ";
-  var players_string = "Players: "
+  var players_string = "Players: ";
+
 
   for(i=0; i<rooms.length; i++){
+
+
     var graph = document.createElement("p");      // create paragraph element
-    var rName = rooms[i][0];                   // get the room name
-    var noPlayers = rooms[i][1];    // get number of players in the room
-    console.log("players: ", noPlayers);
-    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers);  // concatenate all the strings
+
+    var rName = rooms[i][0];                      // get the room name
+    var noPlayers = rooms[i][1];                  // get number of players in the room
+
+    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
+
+    if(noPlayers == 1){
+      // make join buttons for rooms with 1 player in it
+      var btn = document.createElement("button");
+      btn.setAttribute("onclick", "clientJoinRoom(rName)");
+      btn.setAttribute("class", "button buttonJoin");
+      btn.innerHTML = "Join Room";
+      graph.appendChild(btn);
+    }
+
     var element = document.getElementById("list_div");
     element.appendChild(graph);
   }
@@ -133,8 +157,9 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input placeholder="..."  id="chat_bar" autocomplete="off"/> <button onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
 }
+
 
 function writeChat(msg){
   // function to write chat msg to screen(html)
@@ -150,9 +175,14 @@ function clearMain(elementID) {
   while(div.firstChild) {
     div.removeChild(div.firstChild);
   }
-
 }
 
+
+function createTimer(elementID){
+  var div = document.getElementById(elementID);
+  var game_length = 60;
+  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
+}
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
 
@@ -180,6 +210,7 @@ window.addEventListener("deviceorientation", handleOrientation, true);
 var client_x;
 var client_y;
 function mousemove(event){
+  // TODO: figure out if we need this anymore?
   // function for tracking mouse movement on screen (x,y) coords
   client_x = event.x;
   client_y = event.y;
@@ -189,8 +220,9 @@ function mousemove(event){
 window.addEventListener("mousemove", mousemove, true);
 
 function onWindowResize() {
-  //window resizing func
+  // window resizing func
   // TODO: Fix, "cant read clientWidth of null"
+  // TODO: figure out if needed?
   camera.aspect = container.clientWidth / container.clientHeight;
 
   camera.updateProjectionMatrix();
@@ -293,26 +325,9 @@ function initMods() {
     // only using parrot model for now
     lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
   }
-
 }
 
-function getRandomNum(min, max){
-  return Math.random() * (max - min) + min;
-}
 
-function movement(model) {
-  // function for updating movement in the environment
-  // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.05, 0.05));
-  model.rotateY(getRandomNum(-0.05, 0.05));
-  model.rotateZ(getRandomNum(-0.05, 0.05));
-  model.translateZ(5);
-}
-
-function scoreCalc(){
-  // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
-  return false;
-}
 
 function addMods(entry_mods) {
   // function for adding new models to the Scene
@@ -353,7 +368,7 @@ function update() {
           position: {},
           rotation: {}
         };
-        console.log(models[i].position);
+        // console.log(models[i].position);
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
@@ -373,12 +388,50 @@ function update() {
   }
 }
 
+
+/*
+GENERAL FUNCTIONS
+*/
+
 function render() {
   //func for rendering mods
   renderer.render( scene, camera );
 }
 
+function getRandomNum(min, max){
+  return Math.random() * (max - min) + min;
+}
 
+function movement(model) {
+  // updates model position
+  // TODO: write the boid logic here
+  model.rotateX(getRandomNum(-0.05, 0.05));
+  model.rotateY(getRandomNum(-0.05, 0.05));
+  model.rotateZ(getRandomNum(-0.05, 0.05));
+  model.translateZ(5);
+}
+
+function endGame() {
+  console.log("GAME OVER!");
+}
+
+var player_score = 0;
+function scoreCalc(){
+  // TODO: write function to calculate score for each player. should be based on how long each boid spends on each player's screen.
+  player_score += models.length;
+  scoreDisp(player_score);
+}
+//
+// function timerCalc(){
+//   // TODO: write timer function to time the game
+// // should this be tracked by server?
+//   timerDisp(time);
+//   return false;
+// }
+
+/*
+MAIN FUNCTION
+*/
 function init() {
   //setting up three.js scene
   container = document.querySelector('#scene-container');
@@ -394,6 +447,7 @@ function init() {
     initMods();
     createRenderer();
 
+
     // TODO: maybe think about splitting this up into init() and startGame()?
 
     renderer.setAnimationLoop ( () => {
@@ -401,6 +455,8 @@ function init() {
       stats.begin();
       update();
       render();
+      // scoreCalc();
+      // timerCalc();
       stats.end();
     });
 
@@ -418,6 +474,8 @@ function init() {
 
       update();
       render();
+      // scoreCalc();
+      // timerCalc();
 
     });
   }

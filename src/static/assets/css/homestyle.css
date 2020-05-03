@@ -21,6 +21,8 @@ h2 {
 p {
   text-align:center;
   font-family: Arial;
+  padding: 0;
+  border: none;
 }
 
 a { color: inherit; }
@@ -40,4 +42,40 @@ a:hover {
 
 a:active {
   text-decoration: none;
+}
+
+.button {
+  background-color: #DCDCDC;
+  color: black;
+  transition-duration: 0.4s;
+  border: 2px solid #555555;
+  border-radius: 4px;
+  text-align: center;
+  display: inline-block;
+}
+
+.buttonAuto {
+  font-size: 20px;
+  padding: 5px 18%;
+}
+
+.buttonJoin {
+  font-size: 16px;
+  padding: 5px 10px;
+}
+
+.buttonCreate{
+  font-size: 20px;
+  padding: 5px 18%;
+}
+
+.button:hover{
+  background-color: #555555;
+  color: white;
+}
+
+.buttonCreate:hover{
+  border-color: #008000;
+  background-color: #008000;
+  color: white;
 }

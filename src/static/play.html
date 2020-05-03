@@ -8,20 +8,23 @@
     </head>
 
     <body>
+      <div id="timer">
+      </div>
       <div id="main">
         <h1>MUBS</h1>
 
         <h2>(Multi User BoidS)</h2>
-        <p>Auto-matchmake by clicking the button or you can choose or create an available room from the list below below.</p>
-        <button onclick="autoMatch()"> Auto</button>
+        <p> <button onclick="autoMatch()" class="button buttonAuto"> Auto</button> </p>
+        <p>Auto-matchmake by clicking the button above or choose an available room from the list below below.</p>
           <div id="list_div">
           </div>
+        <p> <button onclick="createRoom()" class= "button buttonCreate"> Create Room </button></p>
       </div>
 
       <script src="/static/scripts/stats.js/build/stats.min.js"></script>
       <script src="https://threejs.org/build/three.js"></script>
       <script src="https://threejs.org/examples/js/loaders/GLTFLoader.js"></script>
-      <script src="/static/game.js"></script> 
+      <script src="/static/game.js"></script>
     </body>
 
 </html>

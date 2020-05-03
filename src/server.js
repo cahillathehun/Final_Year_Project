@@ -1,5 +1,7 @@
 
-//dependencies
+/*
+DEPENDENCIES
+*/
 // const uuid = require("uuid/v1")    // now depreciated
 const { v4: uuidv4 } = require('uuid');
 const express = require("express");
@@ -11,7 +13,7 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 
-const PORT = 80;
+const PORT = 80;    // default port
 
 app.set("port", (process.env.PORT || PORT)); //set port to port 80
 
@@ -23,10 +25,6 @@ app.get("/", function(req, res) {
 
 app.get("/play", function(req, res) {
     res.sendFile(path.join(__dirname, "/static/play.html"));
-});
-
-app.get("/matchmake", function(req, res) {
-    res.sendFile(path.join(__dirname, "/static/matchmake.html"));
 });
 
 app.get("/settings", function(req, res) {
@@ -45,8 +43,14 @@ async function joinRoom(socket, room) {
   // connect the client to the room
   await socket.join(room);
   console.log(socket.id, "joined", room);
-
 };
+
+function createRoom(){
+  const room = uuidv4();
+  r_list.push(room);
+  free_rooms.push(room);
+  return(room);
+}
 
 
 function checkRooms(socket, roomArray) {
@@ -54,9 +58,7 @@ function checkRooms(socket, roomArray) {
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space create a new one
-    const room = uuidv4();
-    r_list.push(room);
-    free_rooms.push(room);
+    room = createRoom();
     joinRoom(socket, room);
     return(null);
 
@@ -78,23 +80,36 @@ function checkRooms(socket, roomArray) {
 var r_list = [];
 var free_rooms = [];   //list of rooms with only one client in it, used for auto matchmaking
 io.on("connection", function(socket) {
-    console.log("connection made");
-    socket.on("newClient", function(){
-    });
+    console.log("Connection made!");
 
     socket.on("autoMatch", function(){
       // start the auto-matchmaking for the client
       var game_start_state = checkRooms(socket, free_rooms);
 
+      // tell client to clear screen
       socket.emit("clearScreen","cls");
+
       if (game_start_state){
         console.log("told room", game_start_state, "to start their game!")
         io.to(game_start_state).emit("startGame", game_start_state);
       }
     });
 
+    socket.on("createRoom", function() {
+      // create a room and put this client into it
+      room = createRoom();
+      joinRoom(socket, room);
+
+      // tell client to clear screen
+      socket.emit("clearScreen","cls");
+    });
+
+    socket.on("clientJoin", function(room_id) {
+      console.log("added client to room");
+    });
+
     socket.on("disconnect", function() {
-      console.log("user disconnected");
+      console.log("User has disconnected")
     });
 
     socket.on("getRooms", function() {
@@ -103,8 +118,9 @@ io.on("connection", function(socket) {
 
       var display_rooms = [];
       var rooms = io.sockets.adapter.rooms;
-      var r_name;
       var r_length;
+
+      // iterate through room list
       for(i=0; i<r_list.length; i++){
         r = r_list[i];
         // check if room in our room list exists anymore
@@ -124,11 +140,11 @@ io.on("connection", function(socket) {
 
     socket.on("modelExits", (models) => {
       // receive list of exiting models
-      // console.log("exits occured: ", models.length);
 
       let socket_and_room = Object.keys(socket.rooms);
       let room = socket_and_room[1];
-      // console.log("exits occured: ", models[0]["object"]);
+
+      // send to other client
       socket.to(room).emit("modelEntries", models);
     });
 
