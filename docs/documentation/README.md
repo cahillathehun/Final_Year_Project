@@ -16,7 +16,7 @@ In addition, the file names you choose to use should make clear what the documen
 
 *Do not place any other files in this directory.*
 
-This is a project unertaken by lexander Cahll and Liam O Cearbhaill.
+This is a project undertaken by Alexander Cahll and Liam O Cearbhaill.
 The aim of this project is to implement a boids algorithm and achieving multiple
 users within a single instance with the use of websockets.
 # ==============================
