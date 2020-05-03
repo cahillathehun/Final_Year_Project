@@ -88,9 +88,9 @@ function chatMsg(){
   input_field.value = "";   // reset the chat bar so it's blank again
 }
 
-function clientJoinRoom(room_id) {
+function clientJoinRoom(rName) {
   // join specific existing room with space
-  socket.emit("clientJoin", room_id);
+  socket.emit("clientJoin", rName);
 }
 
 /*
@@ -140,7 +140,7 @@ function createRoomsList(rooms) {
     if(noPlayers == 1){
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
-      btn.setAttribute("onclick", "clientJoinRoom(room_id)");
+      btn.setAttribute("onclick", "clientJoinRoom(rName)");
       btn.setAttribute("class", "button buttonJoin");
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
