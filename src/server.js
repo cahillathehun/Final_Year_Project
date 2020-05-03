@@ -104,8 +104,11 @@ io.on("connection", function(socket) {
       socket.emit("clearScreen","cls");
     });
 
-    socket.on("clientJoin", function(room_id) {
+    socket.on("clientJoin", function(room) {
       console.log("added client to room");
+      joinRoom(socket, room);
+      socket.emit("clearScreen","cls");
+      io.to(room).emit("startGame", room);
     });
 
     socket.on("disconnect", function() {
