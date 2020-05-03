@@ -2,7 +2,7 @@
 //   var socket = io.connect(localhost:80);
 // });
 
-// var socket = io();
+var socket = io();
 
 socket.emit("getRooms");    //tells the server it wants a list of the rooms
 var roomList = []
