@@ -22,6 +22,11 @@ behaviours.
 
 # From a developers perspective:
 
+Clone the repo available here
+https://gitlab.computing.dcu.ie/cahila23/2020-ca400-cahila23-ocearbl2/
+
 start server using 'sudo npm start'
 
 start tests using 'sudo npm run test'
+
+For collaboration get in contact via git.

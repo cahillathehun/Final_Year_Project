@@ -1,4 +1,4 @@
-// import autoMatch from "../../src/static/game.js";
+import autoMatch from "../../src/static/game.js";
 // import createStyle from "../../src/static/game";
 // import createRoomsList from "../../src/static/game";
 // import createChat from "../../src/static/game";
@@ -25,13 +25,13 @@
 
 // var SocketTester = require('socket-tester');
 
-// var options = {  
+// var options = {
 //     transports: ['websocket'],
 //     'force new connection': true,
 //     'forceNew': true
 //   };
-  
-// var socketTester = new SocketTester(io, socketUrl, options);  
+
+// var socketTester = new SocketTester(io, socketUrl, options);
 // // var room = 'lobby';
 
 
@@ -40,12 +40,12 @@
 // describe("Game test", () => {
 //     describe("Check autoMatch test", () => {
 //         it("should return a string confirming automatch", function(done) {
-        
+
 //             var client1 = {
 //                 on: {
 //                     'message': socketTester.shouldBeCalledNTimes(0)
 //                     // for some reason, assert in socket-tester cannot assert
-//                     // anything other than 0. 
+//                     // anything other than 0.
 //                     // May have to change the testing structure... again...
 //                 },
 //                 emit: {
@@ -66,7 +66,7 @@
 //         });
 
 //         it("Operation should not be called", function(done) {
-        
+
 //             var client1 = {
 //                 on: {
 //                     'message': socketTester.shouldNotBeCalled()
@@ -91,7 +91,7 @@
 //         it("test template here(Will always pass)", function(done) {
 //         // set the client actions on recieving <event 'message'>
 //             var client1 = {
-//                 on: { 
+//                 on: {
 //                     'message': socketTester.shouldNotBeCalled()
 //                 },
 //                 // what this should emit itself
@@ -113,11 +113,11 @@
 //         });
 // //to here for test template
 
-        
+
 
 
 //     });
-    
+
 // });
 
 // ----------------------------------------------------
