@@ -88,8 +88,10 @@ function chatMsg(){
   input_field.value = "";   // reset the chat bar so it's blank again
 }
 
-function clientJoinRoom(rName) {
+function clientJoinRoom() {
   // join specific existing room with space
+  var rName = event.target.id;
+  console.log(rName);
   socket.emit("clientJoin", rName);
 }
 
@@ -125,12 +127,11 @@ function createRoomsList(rooms) {
 
   for(i=0; i<rooms.length; i++){
 
-
-    var graph = document.createElement("p");      // create paragraph element
-
     var rName = rooms[i][0];                      // get the room name
     var noPlayers = rooms[i][1];                  // get number of players in the room
 
+
+    var graph = document.createElement("p");      // create paragraph element
     var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
@@ -140,8 +141,9 @@ function createRoomsList(rooms) {
     if(noPlayers == 1){
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
-      btn.setAttribute("onclick", "clientJoinRoom(rName)");
+      btn.setAttribute("onclick", "clientJoinRoom()");
       btn.setAttribute("class", "button buttonJoin");
+      btn.setAttribute("id", rName);
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
     }
