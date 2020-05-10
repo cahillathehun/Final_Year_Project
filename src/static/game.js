@@ -56,7 +56,7 @@ socket.on("modelEntries", function(entries) {
   // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
   // console.log(entries);
-  addMods(entries);
+  addEntryMods(entries);
 })
 
 /*
@@ -289,13 +289,7 @@ function createRenderer() {
 }
 
 const onProgress = () => {};
-function addMods(entries) {
-  // func for loading the .glb models and adding to the three.js scene
-  for(i=0; i<entries.length; i++){
-    // iterate through entries array and add to scene in the right place
-    entry = entries[i];
-  }
-}
+
 
 var models = []; // lists of models to be rendered
 function onLoad(gltf, pos, rot) {
@@ -318,34 +312,49 @@ function onLoad(gltf, pos, rot) {
   scene.add(obj);
 }
 
+
+
+function addMods(mod_file, x, y, z, rotation, err){
+// generic func for add models/objects
+
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation), onProgress, err);
+  return;
+}
+
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
   const init_mods_amt = 3;
-  const onError = (errorMsg) => {console.error(errorMsg);};
+  const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
     // only using parrot model for now
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
+    var x = getRandomNum(-300, 300);
+    var y = getRandomNum(-300, 300);
+    var z = getRandomNum(-200, 300);
+    addMods(glb, x, y, z, false, initModsError);
   }
 }
 
 
 
-function addMods(entry_mods) {
+function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
-  const onError = (errorMsg) => {console.error(errorMsg);};
+  const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
 
   for(i=0; i<entry_mods.length;i++){
     // get positions and rotations and create new birdie
-    console.log(entry_mods[i].position.x);
+
     var x = entry_mods[i].position.x;
     var y = entry_mods[i].position.y;
     var z = entry_mods[i].position.z;
     var rots = entry_mods[i].rotation;
 
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rots), onProgress, onError);
+    addMods(glb, x, y, z, rots, entryModsError);
+
   }
 }
 
