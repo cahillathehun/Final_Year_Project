@@ -296,7 +296,9 @@ function onLoad(gltf, pos, rot) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
   obj.position.copy(pos);
+
   if(rot != false){
+    // check if a certain rotation needs to be set
     obj.rotateX(rot._x);
     obj.rotateY(rot._y);
     obj.rotateZ(rot._z);
@@ -350,7 +352,7 @@ function addEntryMods(entry_mods) {
 
     var x = entry_mods[i].position.x;
     var y = entry_mods[i].position.y;
-    var z = entry_mods[i].position.z;
+    var z = entry_mods[i].position.z - 10;
     var rots = entry_mods[i].rotation;
 
     addMods(glb, x, y, z, rots, entryModsError);
