@@ -351,8 +351,21 @@ function addEntryMods(entry_mods) {
     // get positions and rotations and create new birdie
 
     var x = entry_mods[i].position.x;
+    if(x < 0){
+      // attempt to fix dissapearing bird problem
+      x+=5;
+    } else {
+      x-=5;
+    }
     var y = entry_mods[i].position.y;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
     var z = entry_mods[i].position.z - 10;
+
     var rots = entry_mods[i].rotation;
 
     addMods(glb, x, y, z, rots, entryModsError);
@@ -415,6 +428,8 @@ function getRandomNum(min, max){
   return Math.random() * (max - min) + min;
 }
 
+
+// const y_axis_flip = new THREE.Vector3(0,1,0);
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
@@ -422,6 +437,19 @@ function movement(model) {
   model.rotateY(getRandomNum(-0.05, 0.05));
   model.rotateZ(getRandomNum(-0.05, 0.05));
   model.translateZ(5);
+  //
+  // var curr_coords = model.getWorldPosition();
+  // var rotation;
+  // // console.log(curr_coords);
+  // if( (Math.abs(curr_coords.z) + 5) > 800){
+  //   // if going to go outside desired z coords change angle
+  //   rotation = model.rotation._y;
+  //   // model.setRotationFromAxisAngle(y_axis_flip, (180 + rotation));
+  //   model.rotateY(180 + (rotation*2));
+  //   model.translateZ(5);
+  // }
+
+  // console.log(model.getWorldPosition());
 }
 
 function endGame() {
