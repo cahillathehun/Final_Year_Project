@@ -36,8 +36,8 @@ body {
   width: 40px; /* Full width */
   height: 40px;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  right: 50%;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
   z-index: 2;
   cursor: pointer;

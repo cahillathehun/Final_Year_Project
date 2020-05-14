@@ -46,7 +46,8 @@ socket.on("clearScreen", function(n) {
   createStyle();
   createChat("main");
   dispChatOverlay();
-  createTimer("timer");
+  dispTimerOverlay();
+
   player_num = n;
   console.log("you are player: ", player_num);
 });
@@ -170,12 +171,17 @@ function createChat(elementID){
 }
 
 function dispChatOverlay(){
+  // func changes disp from none -> block
   document.getElementById("chatoverlay").style.display = "block";
+}
+
+function dispTimerOverlay(){
+  // func changes disp from none -> block
+  document.getElementById("timeroverlay").style.display = "block";
 }
 
 function writeChat(msg){
   // function to write chat msg to screen(html)
-  // TODO: finish writing chat feature
   // NOTE: do this using overlay
 
   var chat_text = document.getElementById("chattext");
@@ -183,7 +189,15 @@ function writeChat(msg){
   return;
 }
 
-function clearMain(elementID) {
+function writeTimer(time){
+  // func for writing amount of time left at top of screen
+
+  var timer_text = document.getElementById("timertext");
+  timer_text.innerHTML = time;
+  return;
+}
+
+function clearMain(elementID){
   // func for clearing room list off screen
   var div = document.getElementById(elementID);
 
@@ -193,12 +207,7 @@ function clearMain(elementID) {
 }
 
 
-function createTimer(elementID){
-  // NOTE: do this using overlay
-  var div = document.getElementById(elementID);
-  var game_length = 60;
-  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
-}
+
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
   // NOTE: do this using overlay
@@ -231,7 +240,6 @@ function mousemove(event){
   // function for tracking mouse movement on screen (x,y) coords
   client_x = event.x;
   client_y = event.y;
-
 
   // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
@@ -290,10 +298,10 @@ function createLights() {
   const ambient_light = new THREE.AmbientLight( 0xcccccc );
   scene.add(ambient_light);
 
-  const directiona_light = new THREE.DirectionalLight( 0xffffff );
-  directiona_light.position.set( 0, 1, 1 ).normalize();
+  const directional_light = new THREE.DirectionalLight( 0xffffff );
+  directional_light.position.set( 0, 1, 1 ).normalize();
 
-  scene.add( directiona_light );
+  scene.add( directional_light );
 }
 
 function createRenderer() {
@@ -310,12 +318,18 @@ const onProgress = () => {};
 
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot, player) {
+function onLoad(gltf, pos, rot, player, type) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
 
   // color changing depending on player
-  if(player == 1){
+  if(type == "init"){
+    obj.name = player_num;
+  } else{
+    obj.name = player;
+  }
+
+  if(obj.name == 1){
     obj.material.color.set(0x000099);
   } else {
     obj.material.color.set(0x990000);
@@ -334,6 +348,7 @@ function onLoad(gltf, pos, rot, player) {
   const mixer = new THREE.AnimationMixer(obj);
   mixers.push(mixer);
 
+  console.log(obj);
   const action = mixer.clipAction(animation);
   action.play();
   models.push(obj);
@@ -342,10 +357,10 @@ function onLoad(gltf, pos, rot, player) {
 
 
 
-function addMods(mod_file, x, y, z, rotation, player, err){
+function addMods(mod_file, x, y, z, rotation, player, err, type){
 // generic func for add models/objects
 
-  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player), onProgress, err);
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player, type), onProgress, err);
   return;
 }
 
@@ -360,7 +375,7 @@ function initMods() {
     var x = getRandomNum(-300, 300);
     var y = getRandomNum(-300, 300);
     var z = getRandomNum(-200, 300);
-    addMods(glb, x, y, z, false, player_num, initModsError);
+    addMods(glb, x, y, z, false, player_num, initModsError, "init");
   }
 }
 
@@ -370,11 +385,6 @@ function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
-  if(player_num == 1){
-    var entry_player_num =2;
-  } else {
-    var entry_player_num =1;
-  }
 
   const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
@@ -411,7 +421,9 @@ function addEntryMods(entry_mods) {
 // just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
-    addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
+    var entry_no = entry_mods[i].p_no;
+
+    addMods(glb, x, y, z, rots, entry_no, entryModsError, "add");
 
   }
 }
@@ -435,13 +447,15 @@ function update() {
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
         const info = {
           position: {},
-          rotation: {}
+          rotation: {},
+          p_no: 0
         };
 
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
         info.rotation = models[i].rotation;
+        info.p_no = models[i].name;
 
         exits.push(info);
         models.splice(i, 1);
@@ -521,11 +535,26 @@ function scoreCalc(){
 /*
 MAIN FUNCTION
 */
+
+function startTimer(time){
+  var t = setInterval(function() {
+    time = time - 1;
+    writeTimer(time);
+
+    if(time < 1){
+      clearInterval(t);
+      endGame();
+    }
+  }, 1000);
+}
+
 function init() {
   //setting up three.js scene
   container = document.querySelector('#scene-container');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
+  var game_length = 60;
+
 
   if(DEV == true){
     var stats = new Stats();
@@ -535,6 +564,7 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    startTimer(game_length);
 
 
     // TODO: maybe think about splitting this up into init() and startGame()?
@@ -555,6 +585,7 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    startTimer(game_length);
 
     // TODO: maybe think about splitting this up into init() and startGame()?
 
