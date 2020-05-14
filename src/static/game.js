@@ -46,7 +46,6 @@ socket.on("clearScreen", function(n) {
   createStyle();
   createChat("main");
   dispChatOverlay();
-  dispTimerOverlay();
 
   player_num = n;
   console.log("you are player: ", player_num);
@@ -524,13 +523,7 @@ function scoreCalc(){
   player_score += models.length;
   scoreDisp(player_score);
 }
-//
-// function timerCalc(){
-//   // TODO: write timer function to time the game
-// // should this be tracked by server? to stop players editing js and setting their own score
-//   timerDisp(time);
-//   return false;
-// }
+
 
 /*
 MAIN FUNCTION
@@ -564,7 +557,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
-    startTimer(game_length);
+    dispTimerOverlay();
+    startTimer(game_length);    // starts a setInterval func for the timer
 
 
     // TODO: maybe think about splitting this up into init() and startGame()?
@@ -575,7 +569,6 @@ function init() {
       update();
       render();
       // scoreCalc();
-      // timerCalc();
       stats.end();
     });
 
@@ -585,7 +578,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
-    startTimer(game_length);
+    dispTimerOverlay();
+    startTimer(game_length);      // starts a setInterval func for the timer
 
     // TODO: maybe think about splitting this up into init() and startGame()?
 

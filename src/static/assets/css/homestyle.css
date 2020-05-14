@@ -36,8 +36,7 @@ body {
   width: 52px;
   height: 52px;
   top: 0;
-  left: 50%;
-  right: 50%;
+  left: 49%;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
   z-index: 2; /* makes sure that it is brought to front of screen */
 }
@@ -45,8 +44,9 @@ body {
 #timertext {
   /* format of timer text */
   font-family: Arial;
-  top: 50%;
-  left: 50%;
+  text-align: center;
+  position: relative;
+  top: 12px;
   color: white; /* white on black */
 }
 
