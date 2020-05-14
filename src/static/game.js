@@ -4,7 +4,14 @@ let camera;
 let controls;
 let renderer;
 let scene;
+/*
+player_num = 0 if not in a room
+player_num = 1 if first to join room
+player_num = 2 if second to join room
 
+set by clearScreen
+*/
+var player_num = 0;
 
 /*
 
@@ -33,12 +40,15 @@ socket.on("giveRooms", function(rooms) {
   createRoomsList(rooms);
 });
 
-socket.on("clearScreen", function(rooms) {
+socket.on("clearScreen", function(n) {
   // calls functions to clear the screen and setup for rendering the models when client hear "clearScreen" emit from server
   clearMain("main");
   createStyle();
   createChat("main");
+  dispChatOverlay();
   createTimer("timer");
+  player_num = n;
+  console.log("you are player: ", player_num);
 });
 
 socket.on("startGame", function(rid) {
@@ -48,15 +58,13 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
-  console.log("chat msg received: ", msg, " time to display on screen");
   writeChat(msg);
 });
 
 socket.on("modelEntries", function(entries) {
   // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
-  // console.log(entries);
-  addMods(entries);
+  addEntryMods(entries);
 })
 
 /*
@@ -74,7 +82,7 @@ function createRoom(){
   socket.emit("createRoom");
 }
 
-function chatMsg(){
+function sendChat(){
   // sends chat msgs
 
   // following three lines prevent the page from being reloaded after submitting
@@ -91,7 +99,6 @@ function chatMsg(){
 function clientJoinRoom() {
   // join specific existing room with space
   var rName = event.target.id;
-  console.log(rName);
   socket.emit("clientJoin", rName);
 }
 
@@ -159,14 +166,20 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
 
+function dispChatOverlay(){
+  document.getElementById("chatoverlay").style.display = "block";
+}
 
 function writeChat(msg){
   // function to write chat msg to screen(html)
   // TODO: finish writing chat feature
-  console.log(msg);
+  // NOTE: do this using overlay
+
+  var chat_text = document.getElementById("chattext");
+  chat_text.innerHTML = msg;
   return;
 }
 
@@ -181,12 +194,14 @@ function clearMain(elementID) {
 
 
 function createTimer(elementID){
+  // NOTE: do this using overlay
   var div = document.getElementById(elementID);
   var game_length = 60;
   div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
 }
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
+  // NOTE: do this using overlay
 
   return false;
 }
@@ -217,9 +232,11 @@ function mousemove(event){
   client_x = event.x;
   client_y = event.y;
 
-  console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
+
+  // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
-window.addEventListener("mousemove", mousemove, true);
+// NOTE: not needed
+// window.addEventListener("mousemove", mousemove, true);
 
 function onWindowResize() {
   // window resizing func
@@ -245,7 +262,8 @@ three.js is used for the rendering and is loaded by:
   /src/static/play.html
 from:
   /src/static/scripts/three.js
-it used to be loaded from the official three.js link but was changed
+
+It used to be loaded from the official three.js link but was changed
 as loading it locally is faster and more reliable
 
 */
@@ -289,20 +307,24 @@ function createRenderer() {
 }
 
 const onProgress = () => {};
-function addMods(entries) {
-  // func for loading the .glb models and adding to the three.js scene
-  for(i=0; i<entries.length; i++){
-    // iterate through entries array and add to scene in the right place
-    entry = entries[i];
-  }
-}
+
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot) {
+function onLoad(gltf, pos, rot, player) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
+
+  // color changing depending on player
+  if(player == 1){
+    obj.material.color.set(0x000099);
+  } else {
+    obj.material.color.set(0x990000);
+  }
+
   obj.position.copy(pos);
+
   if(rot != false){
+    // check if a certain rotation needs to be set
     obj.rotateX(rot._x);
     obj.rotateY(rot._y);
     obj.rotateZ(rot._z);
@@ -318,34 +340,79 @@ function onLoad(gltf, pos, rot) {
   scene.add(obj);
 }
 
+
+
+function addMods(mod_file, x, y, z, rotation, player, err){
+// generic func for add models/objects
+
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player), onProgress, err);
+  return;
+}
+
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
   const init_mods_amt = 3;
-  const onError = (errorMsg) => {console.error(errorMsg);};
+  const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
     // only using parrot model for now
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
+    var x = getRandomNum(-300, 300);
+    var y = getRandomNum(-300, 300);
+    var z = getRandomNum(-200, 300);
+    addMods(glb, x, y, z, false, player_num, initModsError);
   }
 }
 
 
 
-function addMods(entry_mods) {
+function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
-  const onError = (errorMsg) => {console.error(errorMsg);};
+  if(player_num == 1){
+    var entry_player_num =2;
+  } else {
+    var entry_player_num =1;
+  }
 
+  const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
+
+// NOTE: tried tonnes of fucking ways to change angle at which birds enter to stop dissapearing birds but
+// spawning closer towards origin seems to be most consitent.
+// angle at which they need to enter depends so much on how they exit.
+// Solution has side effect of making transition less seamless.
   for(i=0; i<entry_mods.length;i++){
     // get positions and rotations and create new birdie
-    console.log(entry_mods[i].position.x);
+
     var x = entry_mods[i].position.x;
+    if(x < 0){
+      // attempt to fix dissapearing bird problem
+      x+=5;
+    } else {
+      x-=5;
+    }
     var y = entry_mods[i].position.y;
-    var z = entry_mods[i].position.z;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
+    var z = entry_mods[i].position.z - 10;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
+
+// just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rots), onProgress, onError);
+    addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
+
   }
 }
 
@@ -370,7 +437,7 @@ function update() {
           position: {},
           rotation: {}
         };
-        // console.log(models[i].position);
+
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
@@ -404,13 +471,33 @@ function getRandomNum(min, max){
   return Math.random() * (max - min) + min;
 }
 
+
+// const y_axis_flip = new THREE.Vector3(0,1,0);
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.05, 0.05));
-  model.rotateY(getRandomNum(-0.05, 0.05));
-  model.rotateZ(getRandomNum(-0.05, 0.05));
-  model.translateZ(5);
+  model.rotateX(getRandomNum(-0.03, 0.03));
+  model.rotateY(getRandomNum(-0.03, 0.03));
+  model.rotateZ(getRandomNum(-0.03, 0.03));
+  model.translateZ(2.5);
+  /*
+  // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
+  // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
+  // TODO: learn more about quaternions. DONE!
+  // NOTE: did some research on quaternions but still cant get this to work consistently
+  // var curr_coords = model.getWorldPosition();
+  // var rotation;
+  // // console.log(curr_coords);
+  // if( (Math.abs(curr_coords.z) + 5) > 800){
+  //   // if going to go outside desired z coords change angle
+  //   rotation = model.rotation._y;
+  //   // model.setRotationFromAxisAngle(y_axis_flip, (180 + rotation));
+  //   model.rotateY(180 + (rotation*2));
+  //   model.translateZ(5);
+  // }
+  */
+
+  // console.log(model.getWorldPosition());
 }
 
 function endGame() {
@@ -426,7 +513,7 @@ function scoreCalc(){
 //
 // function timerCalc(){
 //   // TODO: write timer function to time the game
-// // should this be tracked by server?
+// // should this be tracked by server? to stop players editing js and setting their own score
 //   timerDisp(time);
 //   return false;
 // }
