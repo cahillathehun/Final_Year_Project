@@ -13,6 +13,6 @@ describe("Server test", () => {
         })
 
 
-    })
+    });
 
 })

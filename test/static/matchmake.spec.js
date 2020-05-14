@@ -1,4 +1,8 @@
 
+// $.getScript ( "socketio.js", function() {
+//   var socket = io.connect("localhost:80");
+// });
+
 const expect = require("chai").expect;
 const socket = require("socket.io");
 const io     = require('socket.io-client');

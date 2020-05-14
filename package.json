@@ -21,6 +21,8 @@
     "@babel/preset-env": "^7.9.0",
     "@babel/register": "^7.9.0",
     "chai": "^4.2.0",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.2.2",
     "mocha": "^7.1.2",
     "nodemon": "^2.0.2",
     "sinon": "^9.0.2",

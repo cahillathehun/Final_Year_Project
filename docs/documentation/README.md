@@ -32,3 +32,15 @@ a headache.
 We found StackOverflow to contain more useful information than socket.io's own
 official documentation.
 # ==============================
+
+This project aims to recreate flocking mechanics and display multi-user environments.
+We have chosen to wrap these up in a game as we felt that this best portrayed
+the different systems we wished to create the best. We also believe that this way
+is the best way forward in terms of keeping user engagement and providing a purpose
+to encompass all of the technologies.
+Due to the technologies we have chosen, this project will run over the web using
+OpenGL and running on an EC2 instance.
+Users will be able to access the project given a link. Due to the nature of OpenGL
+becoming supported on the vast majority of devices both desktop and mobile, there
+are few compatability issues which arise. This allows our project to be versatile
+and run on a wide rage of devices, even the phone in your pocket!
