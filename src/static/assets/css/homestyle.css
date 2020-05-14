@@ -19,14 +19,14 @@ body {
   bottom: 20px;
   background-color: rgba(0,0,0,0.5); /* Black with opacity */
   z-index: 2;
-  cursor: pointer;
 }
 
 #chattext {
+  /* format of chat msgs to be displayed */
   font-family: Arial;
   top: 50%;
   left: 50%;
-  color: white;
+  color: white; /* white on black */
 }
 
 #timeroverlay {
@@ -39,8 +39,8 @@ body {
   left: 0;
   right: 0;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  z-index: 2;
+  cursor: pointer;
 }
 
 h1 {
