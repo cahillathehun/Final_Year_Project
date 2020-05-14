@@ -45,7 +45,7 @@ socket.on("clearScreen", function(n) {
   clearMain("main");
   createStyle();
   createChat("main");
-  dispChatOverlay();
+  document.getElementById("chatoverlay").style.display = "block";
 
   player_num = n;
   console.log("you are player: ", player_num);
@@ -58,6 +58,7 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
+  // TODO: create checks to prevent code injection
   writeChat(msg);
 });
 
@@ -78,14 +79,15 @@ function autoMatch(){
 }
 
 function createRoom(){
-  // create own room
+  // tell server you want to create your own room
   socket.emit("createRoom");
 }
 
 function sendChat(){
   // sends chat msgs
+  // TODO: do some checking of the string to make sure no html can be run/ protect against code injections
 
-  // following three lines prevent the page from being reloaded after submitting
+  // following three lines prevent the page from being reloaded after sending chat as that usually happens with forms
   var form = document.getElementById("myForm");
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener("submit", handleForm);
@@ -97,9 +99,9 @@ function sendChat(){
 }
 
 function clientJoinRoom() {
-  // join specific existing room with space
-  var rName = event.target.id;
-  socket.emit("clientJoin", rName);
+  // join specific existing room
+  var r_name = event.target.id;
+  socket.emit("clientJoin", r_name);
 }
 
 /*
@@ -134,23 +136,23 @@ function createRoomsList(rooms) {
 
   for(i=0; i<rooms.length; i++){
 
-    var rName = rooms[i][0];                      // get the room name
-    var noPlayers = rooms[i][1];                  // get number of players in the room
+    var r_name = rooms[i][0];                      // get the room name
+    var no_players = rooms[i][1];                  // get number of players in the room
 
 
     var graph = document.createElement("p");      // create paragraph element
-    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
+    var roomAndPlayers = name_string.concat(r_name, space_string, players_string, no_players, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
 
-    if(noPlayers == 1){
+    if(no_players == 1){
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
       btn.setAttribute("onclick", "clientJoinRoom()");
       btn.setAttribute("class", "button buttonJoin");
-      btn.setAttribute("id", rName);
+      btn.setAttribute("id", r_name);
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
     }
@@ -169,23 +171,12 @@ function createChat(elementID){
   div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
 
-function dispChatOverlay(){
-  // func changes disp from none -> block
-  document.getElementById("chatoverlay").style.display = "block";
-}
-
-function dispTimerOverlay(){
-  // func changes disp from none -> block
-  document.getElementById("timeroverlay").style.display = "block";
-}
-
 function writeChat(msg){
   // function to write chat msg to screen(html)
   // NOTE: do this using overlay
-
+// TODO: create checks to prevent against code injections
   var chat_text = document.getElementById("chattext");
   chat_text.innerHTML = msg;
-  return;
 }
 
 function writeTimer(time){
@@ -193,7 +184,6 @@ function writeTimer(time){
 
   var timer_text = document.getElementById("timertext");
   timer_text.innerHTML = time;
-  return;
 }
 
 function clearMain(elementID){
@@ -231,7 +221,7 @@ function handleOrientation(event) {
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
 
-
+/*
 var client_x;
 var client_y;
 function mousemove(event){
@@ -244,6 +234,7 @@ function mousemove(event){
 }
 // NOTE: not needed
 // window.addEventListener("mousemove", mousemove, true);
+*/
 
 function onWindowResize() {
   // window resizing func
@@ -275,7 +266,7 @@ as loading it locally is faster and more reliable
 
 */
 
-const mixers = []
+const mixers = []     //array of animations for each model
 const clock = new THREE.Clock();
 var frustum = new THREE.Frustum();
 
@@ -285,7 +276,7 @@ function createCamera() {
 
   camera.position.x = -50;
   camera.position.y = 50;
-  camera.position.z = 1200;
+  camera.position.z = 1150;
   camera.updateMatrix();
   camera.updateMatrixWorld();
   frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
@@ -321,20 +312,20 @@ function onLoad(gltf, pos, rot, player, type) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
 
+  obj.position.copy(pos);
+
   // color changing depending on player
   if(type == "init"){
     obj.name = player_num;
   } else{
     obj.name = player;
   }
-
   if(obj.name == 1){
     obj.material.color.set(0x000099);
   } else {
     obj.material.color.set(0x990000);
   }
 
-  obj.position.copy(pos);
 
   if(rot != false){
     // check if a certain rotation needs to be set
@@ -342,12 +333,11 @@ function onLoad(gltf, pos, rot, player, type) {
     obj.rotateY(rot._y);
     obj.rotateZ(rot._z);
   }
-  const animation = gltf.animations[0];
 
+  const animation = gltf.animations[0];
   const mixer = new THREE.AnimationMixer(obj);
   mixers.push(mixer);
 
-  console.log(obj);
   const action = mixer.clipAction(animation);
   action.play();
   models.push(obj);
@@ -366,11 +356,10 @@ function addMods(mod_file, x, y, z, rotation, player, err, type){
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 3;
+  const init_mods_amt = 10;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
-    // only using parrot model for now
     var x = getRandomNum(-300, 300);
     var y = getRandomNum(-300, 300);
     var z = getRandomNum(-200, 300);
@@ -489,9 +478,9 @@ function getRandomNum(min, max){
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.03, 0.03));
-  model.rotateY(getRandomNum(-0.03, 0.03));
-  model.rotateZ(getRandomNum(-0.03, 0.03));
+  model.rotateX(getRandomNum(-0.025, 0.025));
+  model.rotateY(getRandomNum(-0.025, 0.025));
+  model.rotateZ(getRandomNum(-0.025, 0.025));
   model.translateZ(2.5);
   /*
   // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
@@ -514,6 +503,7 @@ function movement(model) {
 }
 
 function endGame() {
+  // TODO: implement end game
   console.log("GAME OVER!");
 }
 
@@ -530,6 +520,7 @@ MAIN FUNCTION
 */
 
 function startTimer(time){
+  /// TODO: can put score calculations in here
   var t = setInterval(function() {
     time = time - 1;
     writeTimer(time);
@@ -546,7 +537,7 @@ function init() {
   container = document.querySelector('#scene-container');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
-  var game_length = 60;
+  var game_length = 60;   // game length in seconds
 
 
   if(DEV == true){
@@ -557,7 +548,7 @@ function init() {
     createLights();
     initMods();
     createRenderer();
-    dispTimerOverlay();
+    document.getElementById("timeroverlay").style.display = "block";
     startTimer(game_length);    // starts a setInterval func for the timer
 
 
@@ -568,7 +559,6 @@ function init() {
       stats.begin();
       update();
       render();
-      // scoreCalc();
       stats.end();
     });
 
@@ -578,7 +568,7 @@ function init() {
     createLights();
     initMods();
     createRenderer();
-    dispTimerOverlay();
+    document.getElementById("timeroverlay").style.display = "block";
     startTimer(game_length);      // starts a setInterval func for the timer
 
     // TODO: maybe think about splitting this up into init() and startGame()?
@@ -588,8 +578,6 @@ function init() {
 
       update();
       render();
-      // scoreCalc();
-      // timerCalc();
 
     });
   }
