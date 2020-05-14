@@ -94,9 +94,9 @@ io.on("connection", function(socket) {
         io.to(game_start_state).emit("startGame", game_start_state);
       } else {
         player_num = 1;
+        // tell client to clear screen
         socket.emit("clearScreen",player_num);
       }
-      // tell client to clear screen
     });
 
     socket.on("createRoom", function() {

@@ -461,9 +461,9 @@ function getRandomNum(min, max){
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.05, 0.05));
-  model.rotateY(getRandomNum(-0.05, 0.05));
-  model.rotateZ(getRandomNum(-0.05, 0.05));
+  model.rotateX(getRandomNum(-0.03, 0.03));
+  model.rotateY(getRandomNum(-0.03, 0.03));
+  model.rotateZ(getRandomNum(-0.03, 0.03));
   model.translateZ(2.5);
   //
   // var curr_coords = model.getWorldPosition();
