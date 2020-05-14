@@ -45,9 +45,10 @@ socket.on("clearScreen", function(n) {
   clearMain("main");
   createStyle();
   createChat("main");
+  dispChatOverlay();
   createTimer("timer");
   player_num = n;
-  console.log(player_num);
+  console.log("you are player: ", player_num);
 });
 
 socket.on("startGame", function(rid) {
@@ -57,14 +58,12 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
-  console.log("chat msg received: ", msg, " time to display on screen");
   writeChat(msg);
 });
 
 socket.on("modelEntries", function(entries) {
   // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
-  // console.log(entries);
   addEntryMods(entries);
 })
 
@@ -83,7 +82,7 @@ function createRoom(){
   socket.emit("createRoom");
 }
 
-function chatMsg(){
+function sendChat(){
   // sends chat msgs
 
   // following three lines prevent the page from being reloaded after submitting
@@ -100,7 +99,6 @@ function chatMsg(){
 function clientJoinRoom() {
   // join specific existing room with space
   var rName = event.target.id;
-  console.log(rName);
   socket.emit("clientJoin", rName);
 }
 
@@ -168,14 +166,20 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
 
+function dispChatOverlay(){
+  document.getElementById("chatoverlay").style.display = "block";
+}
 
 function writeChat(msg){
   // function to write chat msg to screen(html)
   // TODO: finish writing chat feature
-  console.log(msg);
+  // NOTE: do this using overlay
+
+  var chat_text = document.getElementById("chattext");
+  chat_text.innerHTML = msg;
   return;
 }
 
@@ -190,12 +194,14 @@ function clearMain(elementID) {
 
 
 function createTimer(elementID){
+  // NOTE: do this using overlay
   var div = document.getElementById(elementID);
   var game_length = 60;
   div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
 }
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
+  // NOTE: do this using overlay
 
   return false;
 }
@@ -226,9 +232,11 @@ function mousemove(event){
   client_x = event.x;
   client_y = event.y;
 
-  console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
+
+  // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
-window.addEventListener("mousemove", mousemove, true);
+// NOTE: not needed
+// window.addEventListener("mousemove", mousemove, true);
 
 function onWindowResize() {
   // window resizing func
@@ -254,7 +262,8 @@ three.js is used for the rendering and is loaded by:
   /src/static/play.html
 from:
   /src/static/scripts/three.js
-it used to be loaded from the official three.js link but was changed
+
+It used to be loaded from the official three.js link but was changed
 as loading it locally is faster and more reliable
 
 */
@@ -305,6 +314,7 @@ function onLoad(gltf, pos, rot, player) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
 
+  // color changing depending on player
   if(player == 1){
     obj.material.color.set(0x000099);
   } else {
@@ -369,6 +379,10 @@ function addEntryMods(entry_mods) {
   const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
 
+// NOTE: tried tonnes of fucking ways to change angle at which birds enter to stop dissapearing birds but
+// spawning closer towards origin seems to be most consitent.
+// angle at which they need to enter depends so much on how they exit.
+// Solution has side effect of making transition less seamless.
   for(i=0; i<entry_mods.length;i++){
     // get positions and rotations and create new birdie
 
@@ -394,6 +408,7 @@ function addEntryMods(entry_mods) {
       y-=5;
     }
 
+// just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
     addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
@@ -422,7 +437,7 @@ function update() {
           position: {},
           rotation: {}
         };
-        // console.log(models[i].position);
+
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
@@ -465,7 +480,11 @@ function movement(model) {
   model.rotateY(getRandomNum(-0.03, 0.03));
   model.rotateZ(getRandomNum(-0.03, 0.03));
   model.translateZ(2.5);
-  //
+  /*
+  // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
+  // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
+  // TODO: learn more about quaternions. DONE!
+  // NOTE: did some research on quaternions but still cant get this to work consistently
   // var curr_coords = model.getWorldPosition();
   // var rotation;
   // // console.log(curr_coords);
@@ -476,6 +495,7 @@ function movement(model) {
   //   model.rotateY(180 + (rotation*2));
   //   model.translateZ(5);
   // }
+  */
 
   // console.log(model.getWorldPosition());
 }
@@ -493,7 +513,7 @@ function scoreCalc(){
 //
 // function timerCalc(){
 //   // TODO: write timer function to time the game
-// // should this be tracked by server?
+// // should this be tracked by server? to stop players editing js and setting their own score
 //   timerDisp(time);
 //   return false;
 // }

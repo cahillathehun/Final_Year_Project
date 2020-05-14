@@ -8,6 +8,41 @@ body {
   width: 100%;
 }
 
+#chatoverlay {
+  /* overlay going to be used for displaying chat messages at the bottom of the screen */
+  position: fixed;
+  display: none;
+  width: 100%; /* Full width */
+  height: 22px; /* same hieght as chat bar */
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  background-color: rgba(0,0,0,0.5); /* Black with opacity */
+  z-index: 2;
+  cursor: pointer;
+}
+
+#chattext {
+  font-family: Arial;
+  top: 50%;
+  left: 50%;
+  color: white;
+}
+
+#timeroverlay {
+  /* overlay going to be used for displaying time left at top of the screen */
+  position: fixed;
+  display: none;
+  width: 40px; /* Full width */
+  height: 40px;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
 h1 {
   text-align:center;
   font-family: Arial;
