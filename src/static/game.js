@@ -1,3 +1,7 @@
+// $.getScript ( "socketio.js", function() {
+//   var socket = io.connect("localhost:80");
+// });
+
 var socket = io();
 let container;
 let camera;
