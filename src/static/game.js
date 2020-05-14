@@ -4,7 +4,14 @@ let camera;
 let controls;
 let renderer;
 let scene;
+/*
+player_num = 0 if not in a room
+player_num = 1 if first to join room
+player_num = 2 if second to join room
 
+set by clearScreen
+*/
+var player_num = 0;
 
 /*
 
@@ -33,12 +40,14 @@ socket.on("giveRooms", function(rooms) {
   createRoomsList(rooms);
 });
 
-socket.on("clearScreen", function(rooms) {
+socket.on("clearScreen", function(n) {
   // calls functions to clear the screen and setup for rendering the models when client hear "clearScreen" emit from server
   clearMain("main");
   createStyle();
   createChat("main");
   createTimer("timer");
+  player_num = n;
+  console.log(player_num);
 });
 
 socket.on("startGame", function(rid) {
@@ -292,9 +301,16 @@ const onProgress = () => {};
 
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot) {
+function onLoad(gltf, pos, rot, player) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
+
+  if(player == 1){
+    obj.material.color.set(0x000099);
+  } else {
+    obj.material.color.set(0x990000);
+  }
+
   obj.position.copy(pos);
 
   if(rot != false){
@@ -316,10 +332,10 @@ function onLoad(gltf, pos, rot) {
 
 
 
-function addMods(mod_file, x, y, z, rotation, err){
+function addMods(mod_file, x, y, z, rotation, player, err){
 // generic func for add models/objects
 
-  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation), onProgress, err);
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player), onProgress, err);
   return;
 }
 
@@ -334,7 +350,7 @@ function initMods() {
     var x = getRandomNum(-300, 300);
     var y = getRandomNum(-300, 300);
     var z = getRandomNum(-200, 300);
-    addMods(glb, x, y, z, false, initModsError);
+    addMods(glb, x, y, z, false, player_num, initModsError);
   }
 }
 
@@ -343,6 +359,12 @@ function initMods() {
 function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
+
+  if(player_num == 1){
+    var entry_player_num =2;
+  } else {
+    var entry_player_num =1;
+  }
 
   const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
@@ -365,10 +387,16 @@ function addEntryMods(entry_mods) {
       y-=5;
     }
     var z = entry_mods[i].position.z - 10;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
 
     var rots = entry_mods[i].rotation;
 
-    addMods(glb, x, y, z, rots, entryModsError);
+    addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
 
   }
 }
@@ -436,7 +464,7 @@ function movement(model) {
   model.rotateX(getRandomNum(-0.05, 0.05));
   model.rotateY(getRandomNum(-0.05, 0.05));
   model.rotateZ(getRandomNum(-0.05, 0.05));
-  model.translateZ(5);
+  model.translateZ(2.5);
   //
   // var curr_coords = model.getWorldPosition();
   // var rotation;
