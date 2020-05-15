@@ -1,14 +1,17 @@
-// $.getScript ( "socketio.js", function() {
-//   var socket = io.connect("localhost:80");
-// });
-
 var socket = io();
 let container;
 let camera;
 let controls;
 let renderer;
 let scene;
+/*
+player_num = 0 if not in a room
+player_num = 1 if first to join room
+player_num = 2 if second to join room
 
+set by clearScreen
+*/
+var player_num = 0;
 
 /*
 
@@ -37,12 +40,15 @@ socket.on("giveRooms", function(rooms) {
   createRoomsList(rooms);
 });
 
-socket.on("clearScreen", function(rooms) {
+socket.on("clearScreen", function(n) {
   // calls functions to clear the screen and setup for rendering the models when client hear "clearScreen" emit from server
   clearMain("main");
   createStyle();
   createChat("main");
-  createTimer("timer");
+  document.getElementById("chatoverlay").style.display = "block";
+
+  player_num = n;
+  console.log("you are player: ", player_num);
 });
 
 socket.on("startGame", function(rid) {
@@ -52,15 +58,14 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
-  console.log("chat msg received: ", msg, " time to display on screen");
+  // TODO: create checks to prevent code injection
   writeChat(msg);
 });
 
 socket.on("modelEntries", function(entries) {
   // tells client to start rendering new models that crossed into their env
   console.log(entries.length, " models ENTERING environment!");
-  // console.log(entries);
-  addMods(entries);
+  addEntryMods(entries);
 })
 
 /*
@@ -74,14 +79,15 @@ function autoMatch(){
 }
 
 function createRoom(){
-  // create own room
+  // tell server you want to create your own room
   socket.emit("createRoom");
 }
 
-function chatMsg(){
+function sendChat(){
   // sends chat msgs
+  // TODO: do some checking of the string to make sure no html can be run/ protect against code injections
 
-  // following three lines prevent the page from being reloaded after submitting
+  // following three lines prevent the page from being reloaded after sending chat as that usually happens with forms
   var form = document.getElementById("myForm");
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener("submit", handleForm);
@@ -93,10 +99,9 @@ function chatMsg(){
 }
 
 function clientJoinRoom() {
-  // join specific existing room with space
-  var rName = event.target.id;
-  console.log(rName);
-  socket.emit("clientJoin", rName);
+  // join specific existing room
+  var r_name = event.target.id;
+  socket.emit("clientJoin", r_name);
 }
 
 /*
@@ -131,23 +136,23 @@ function createRoomsList(rooms) {
 
   for(i=0; i<rooms.length; i++){
 
-    var rName = rooms[i][0];                      // get the room name
-    var noPlayers = rooms[i][1];                  // get number of players in the room
+    var r_name = rooms[i][0];                      // get the room name
+    var no_players = rooms[i][1];                  // get number of players in the room
 
 
     var graph = document.createElement("p");      // create paragraph element
-    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
+    var roomAndPlayers = name_string.concat(r_name, space_string, players_string, no_players, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
 
-    if(noPlayers == 1){
+    if(no_players == 1){
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
       btn.setAttribute("onclick", "clientJoinRoom()");
       btn.setAttribute("class", "button buttonJoin");
-      btn.setAttribute("id", rName);
+      btn.setAttribute("id", r_name);
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
     }
@@ -163,18 +168,25 @@ function createChat(elementID){
   // TODO: make functioning chatw
   var div = document.getElementById(elementID);
 
-  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="chatMsg(messages)">Send</button> </form>';
+  div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
-
 
 function writeChat(msg){
   // function to write chat msg to screen(html)
-  // TODO: finish writing chat feature
-  console.log(msg);
-  return;
+  // NOTE: do this using overlay
+// TODO: create checks to prevent against code injections
+  var chat_text = document.getElementById("chattext");
+  chat_text.innerHTML = msg;
 }
 
-function clearMain(elementID) {
+function writeTimer(time){
+  // func for writing amount of time left at top of screen
+
+  var timer_text = document.getElementById("timertext");
+  timer_text.innerHTML = time;
+}
+
+function clearMain(elementID){
   // func for clearing room list off screen
   var div = document.getElementById(elementID);
 
@@ -184,13 +196,10 @@ function clearMain(elementID) {
 }
 
 
-function createTimer(elementID){
-  var div = document.getElementById(elementID);
-  var game_length = 60;
-  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
-}
+
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
+  // NOTE: do this using overlay
 
   return false;
 }
@@ -212,7 +221,7 @@ function handleOrientation(event) {
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
 
-
+/*
 var client_x;
 var client_y;
 function mousemove(event){
@@ -221,9 +230,11 @@ function mousemove(event){
   client_x = event.x;
   client_y = event.y;
 
-  console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
+  // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
-window.addEventListener("mousemove", mousemove, true);
+// NOTE: not needed
+// window.addEventListener("mousemove", mousemove, true);
+*/
 
 function onWindowResize() {
   // window resizing func
@@ -249,12 +260,13 @@ three.js is used for the rendering and is loaded by:
   /src/static/play.html
 from:
   /src/static/scripts/three.js
-it used to be loaded from the official three.js link but was changed
+
+It used to be loaded from the official three.js link but was changed
 as loading it locally is faster and more reliable
 
 */
 
-const mixers = []
+const mixers = []     //array of animations for each model
 const clock = new THREE.Clock();
 var frustum = new THREE.Frustum();
 
@@ -264,7 +276,7 @@ function createCamera() {
 
   camera.position.x = -50;
   camera.position.y = 50;
-  camera.position.z = 1200;
+  camera.position.z = 1150;
   camera.updateMatrix();
   camera.updateMatrixWorld();
   frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
@@ -276,10 +288,10 @@ function createLights() {
   const ambient_light = new THREE.AmbientLight( 0xcccccc );
   scene.add(ambient_light);
 
-  const directiona_light = new THREE.DirectionalLight( 0xffffff );
-  directiona_light.position.set( 0, 1, 1 ).normalize();
+  const directional_light = new THREE.DirectionalLight( 0xffffff );
+  directional_light.position.set( 0, 1, 1 ).normalize();
 
-  scene.add( directiona_light );
+  scene.add( directional_light );
 }
 
 function createRenderer() {
@@ -293,26 +305,36 @@ function createRenderer() {
 }
 
 const onProgress = () => {};
-function addMods(entries) {
-  // func for loading the .glb models and adding to the three.js scene
-  for(i=0; i<entries.length; i++){
-    // iterate through entries array and add to scene in the right place
-    entry = entries[i];
-  }
-}
+
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot) {
+function onLoad(gltf, pos, rot, player, type) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
+
   obj.position.copy(pos);
+
+  // color changing depending on player
+  if(type == "init"){
+    obj.name = player_num;
+  } else{
+    obj.name = player;
+  }
+  if(obj.name == 1){
+    obj.material.color.set(0x000099);
+  } else {
+    obj.material.color.set(0x990000);
+  }
+
+
   if(rot != false){
+    // check if a certain rotation needs to be set
     obj.rotateX(rot._x);
     obj.rotateY(rot._y);
     obj.rotateZ(rot._z);
   }
-  const animation = gltf.animations[0];
 
+  const animation = gltf.animations[0];
   const mixer = new THREE.AnimationMixer(obj);
   mixers.push(mixer);
 
@@ -322,34 +344,75 @@ function onLoad(gltf, pos, rot) {
   scene.add(obj);
 }
 
+
+
+function addMods(mod_file, x, y, z, rotation, player, err, type){
+// generic func for add models/objects
+
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player, type), onProgress, err);
+  return;
+}
+
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 3;
-  const onError = (errorMsg) => {console.error(errorMsg);};
+  const init_mods_amt = 10;
+  const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
-    // only using parrot model for now
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(getRandomNum(-300, 300),getRandomNum(-300, 300),getRandomNum(-200, 300)), false), onProgress, onError);
+    var x = getRandomNum(-300, 300);
+    var y = getRandomNum(-300, 300);
+    var z = getRandomNum(-200, 300);
+    addMods(glb, x, y, z, false, player_num, initModsError, "init");
   }
 }
 
 
 
-function addMods(entry_mods) {
+function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
-  const onError = (errorMsg) => {console.error(errorMsg);};
 
+  const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
+  const glb = "/static/assets/models/Parrot.glb";
+
+// NOTE: tried tonnes of fucking ways to change angle at which birds enter to stop dissapearing birds but
+// spawning closer towards origin seems to be most consitent.
+// angle at which they need to enter depends so much on how they exit.
+// Solution has side effect of making transition less seamless.
   for(i=0; i<entry_mods.length;i++){
     // get positions and rotations and create new birdie
-    console.log(entry_mods[i].position.x);
+
     var x = entry_mods[i].position.x;
+    if(x < 0){
+      // attempt to fix dissapearing bird problem
+      x+=5;
+    } else {
+      x-=5;
+    }
     var y = entry_mods[i].position.y;
-    var z = entry_mods[i].position.z;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
+    var z = entry_mods[i].position.z - 10;
+    if(y < 0){
+      // attempt to fix dissapearing bird problem
+      y+=5;
+    } else {
+      y-=5;
+    }
+
+// just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
-    lodr.load("/static/assets/models/Parrot.glb", gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rots), onProgress, onError);
+    var entry_no = entry_mods[i].p_no;
+
+    addMods(glb, x, y, z, rots, entry_no, entryModsError, "add");
+
   }
 }
 
@@ -372,13 +435,15 @@ function update() {
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
         const info = {
           position: {},
-          rotation: {}
+          rotation: {},
+          p_no: 0
         };
-        // console.log(models[i].position);
+
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
         info.rotation = models[i].rotation;
+        info.p_no = models[i].name;
 
         exits.push(info);
         models.splice(i, 1);
@@ -408,16 +473,37 @@ function getRandomNum(min, max){
   return Math.random() * (max - min) + min;
 }
 
+
+// const y_axis_flip = new THREE.Vector3(0,1,0);
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.05, 0.05));
-  model.rotateY(getRandomNum(-0.05, 0.05));
-  model.rotateZ(getRandomNum(-0.05, 0.05));
-  model.translateZ(5);
+  model.rotateX(getRandomNum(-0.025, 0.025));
+  model.rotateY(getRandomNum(-0.025, 0.025));
+  model.rotateZ(getRandomNum(-0.025, 0.025));
+  model.translateZ(2.5);
+  /*
+  // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
+  // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
+  // TODO: learn more about quaternions. DONE!
+  // NOTE: did some research on quaternions but still cant get this to work consistently
+  // var curr_coords = model.getWorldPosition();
+  // var rotation;
+  // // console.log(curr_coords);
+  // if( (Math.abs(curr_coords.z) + 5) > 800){
+  //   // if going to go outside desired z coords change angle
+  //   rotation = model.rotation._y;
+  //   // model.setRotationFromAxisAngle(y_axis_flip, (180 + rotation));
+  //   model.rotateY(180 + (rotation*2));
+  //   model.translateZ(5);
+  // }
+  */
+
+  // console.log(model.getWorldPosition());
 }
 
 function endGame() {
+  // TODO: implement end game
   console.log("GAME OVER!");
 }
 
@@ -427,22 +513,32 @@ function scoreCalc(){
   player_score += models.length;
   scoreDisp(player_score);
 }
-//
-// function timerCalc(){
-//   // TODO: write timer function to time the game
-// // should this be tracked by server?
-//   timerDisp(time);
-//   return false;
-// }
+
 
 /*
 MAIN FUNCTION
 */
+
+function startTimer(time){
+  /// TODO: can put score calculations in here
+  var t = setInterval(function() {
+    time = time - 1;
+    writeTimer(time);
+
+    if(time < 1){
+      clearInterval(t);
+      endGame();
+    }
+  }, 1000);
+}
+
 function init() {
   //setting up three.js scene
   container = document.querySelector('#scene-container');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
+  var game_length = 60;   // game length in seconds
+
 
   if(DEV == true){
     var stats = new Stats();
@@ -452,6 +548,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    document.getElementById("timeroverlay").style.display = "block";
+    startTimer(game_length);    // starts a setInterval func for the timer
 
 
     // TODO: maybe think about splitting this up into init() and startGame()?
@@ -461,8 +559,6 @@ function init() {
       stats.begin();
       update();
       render();
-      // scoreCalc();
-      // timerCalc();
       stats.end();
     });
 
@@ -472,6 +568,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    document.getElementById("timeroverlay").style.display = "block";
+    startTimer(game_length);      // starts a setInterval func for the timer
 
     // TODO: maybe think about splitting this up into init() and startGame()?
 
@@ -480,8 +578,6 @@ function init() {
 
       update();
       render();
-      // scoreCalc();
-      // timerCalc();
 
     });
   }
