@@ -45,8 +45,8 @@ socket.on("clearScreen", function(n) {
   clearMain("main");
   createStyle();
   createChat("main");
-  document.getElementById("chatoverlay").style.display = "block";
-
+  dispChatOverlay();
+  createTimer("timer");
   player_num = n;
   console.log("you are player: ", player_num);
 });
@@ -58,7 +58,6 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
-  // TODO: create checks to prevent code injection
   writeChat(msg);
 });
 
@@ -99,9 +98,9 @@ function sendChat(){
 }
 
 function clientJoinRoom() {
-  // join specific existing room
-  var r_name = event.target.id;
-  socket.emit("clientJoin", r_name);
+  // join specific existing room with space
+  var rName = event.target.id;
+  socket.emit("clientJoin", rName);
 }
 
 /*
@@ -171,12 +170,18 @@ function createChat(elementID){
   div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
 
+function dispChatOverlay(){
+  document.getElementById("chatoverlay").style.display = "block";
+}
+
 function writeChat(msg){
   // function to write chat msg to screen(html)
+  // TODO: finish writing chat feature
   // NOTE: do this using overlay
-// TODO: create checks to prevent against code injections
+
   var chat_text = document.getElementById("chattext");
   chat_text.innerHTML = msg;
+  return;
 }
 
 function writeTimer(time){
@@ -196,7 +201,12 @@ function clearMain(elementID){
 }
 
 
-
+function createTimer(elementID){
+  // NOTE: do this using overlay
+  var div = document.getElementById(elementID);
+  var game_length = 60;
+  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
+}
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
   // NOTE: do this using overlay
@@ -230,11 +240,11 @@ function mousemove(event){
   client_x = event.x;
   client_y = event.y;
 
+
   // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
 // NOTE: not needed
 // window.addEventListener("mousemove", mousemove, true);
-*/
 
 function onWindowResize() {
   // window resizing func
@@ -308,24 +318,18 @@ const onProgress = () => {};
 
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot, player, type) {
+function onLoad(gltf, pos, rot, player) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
 
-  obj.position.copy(pos);
-
   // color changing depending on player
-  if(type == "init"){
-    obj.name = player_num;
-  } else{
-    obj.name = player;
-  }
-  if(obj.name == 1){
+  if(player == 1){
     obj.material.color.set(0x000099);
   } else {
     obj.material.color.set(0x990000);
   }
 
+  obj.position.copy(pos);
 
   if(rot != false){
     // check if a certain rotation needs to be set
@@ -346,24 +350,25 @@ function onLoad(gltf, pos, rot, player, type) {
 
 
 
-function addMods(mod_file, x, y, z, rotation, player, err, type){
+function addMods(mod_file, x, y, z, rotation, player, err){
 // generic func for add models/objects
 
-  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player, type), onProgress, err);
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player), onProgress, err);
   return;
 }
 
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 10;
+  const init_mods_amt = 3;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
+    // only using parrot model for now
     var x = getRandomNum(-300, 300);
     var y = getRandomNum(-300, 300);
     var z = getRandomNum(-200, 300);
-    addMods(glb, x, y, z, false, player_num, initModsError, "init");
+    addMods(glb, x, y, z, false, player_num, initModsError);
   }
 }
 
@@ -373,6 +378,11 @@ function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
+  if(player_num == 1){
+    var entry_player_num =2;
+  } else {
+    var entry_player_num =1;
+  }
 
   const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
@@ -409,9 +419,7 @@ function addEntryMods(entry_mods) {
 // just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
-    var entry_no = entry_mods[i].p_no;
-
-    addMods(glb, x, y, z, rots, entry_no, entryModsError, "add");
+    addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
 
   }
 }
@@ -478,9 +486,9 @@ function getRandomNum(min, max){
 function movement(model) {
   // updates model position
   // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.025, 0.025));
-  model.rotateY(getRandomNum(-0.025, 0.025));
-  model.rotateZ(getRandomNum(-0.025, 0.025));
+  model.rotateX(getRandomNum(-0.03, 0.03));
+  model.rotateY(getRandomNum(-0.03, 0.03));
+  model.rotateZ(getRandomNum(-0.03, 0.03));
   model.translateZ(2.5);
   /*
   // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
@@ -513,7 +521,13 @@ function scoreCalc(){
   player_score += models.length;
   scoreDisp(player_score);
 }
-
+//
+// function timerCalc(){
+//   // TODO: write timer function to time the game
+// // should this be tracked by server? to stop players editing js and setting their own score
+//   timerDisp(time);
+//   return false;
+// }
 
 /*
 MAIN FUNCTION
