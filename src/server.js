@@ -57,13 +57,9 @@ function checkRooms(socket, roomArray) {
 
   if(!roomArray || !roomArray.length){
     //if there is no room with space try to create a new one
-    if(r_list < 255){
       room = createRoom();
       joinRoom(socket, room);
       return(null);
-    } else {
-      return(-1);
-    }
   } else {
     // if there is a room with a space, try to connect the client to it
     const room = free_rooms[0];
@@ -89,10 +85,7 @@ io.on("connection", function(socket) {
       var game_start_state = checkRooms(socket, free_rooms);
 
       var player_num = 0;
-      if(game_start_state = -1){
-        console.log("too many rooms! try again later");
-      }
-      else if (game_start_state){
+      if (game_start_state){
         player_num = 2;
 
         console.log("told room", game_start_state, "to start their game!")
@@ -108,22 +101,18 @@ io.on("connection", function(socket) {
 
     socket.on("createRoom", function() {
       // create a room and put this client into it
-      if(r_list < 255){
         // put some limit on rooms to prevent spam
         room = createRoom();
         joinRoom(socket, room);
         var player_num = 1;
         // tell client to clear screen and give them their player number
         socket.emit("clearScreen",player_num);
-      } else {
-        console.log("too many rooms! Try again later.");
-      }
     });
 
     socket.on("clientJoin", function(room) {
       console.log("added client to room");
       joinRoom(socket, room);
-      var player_num = 1;
+      var player_num = 2;
       // tell client to clear screen and give them their player number
       socket.emit("clearScreen",player_num);
       io.to(room).emit("startGame", room);

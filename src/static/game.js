@@ -317,6 +317,7 @@ function onLoad(gltf, pos, rot, player, type) {
   // color changing depending on player
   if(type == "init"){
     obj.name = player_num;
+    obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
   } else{
     obj.name = player;
   }
@@ -356,7 +357,7 @@ function addMods(mod_file, x, y, z, rotation, player, err, type){
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 10;
+  const init_mods_amt = 100;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
@@ -416,6 +417,68 @@ function addEntryMods(entry_mods) {
   }
 }
 
+const neighbour_dist = 30;
+function calcFlockCenter(boid){
+  var flock_center = new THREE.Vector3();
+  for(var b=0; b<models.length; b++){
+    var center_dist = models[b].position.distanceTo(boid.position);
+    if(center_dist <=30){
+      if(models[b] != boid){ flock_center.add(models[b].position) }
+
+    }
+  }
+  flock_center.divideScalar(models.length - 1);
+
+  flock_center.sub(boid.position);
+  flock_center.divideScalar(800);
+
+  return flock_center;
+  console.log("center calc done.");
+}
+
+const min_dist = 10;
+function repulseFromOthers(birdie){
+  var repulse = new THREE.Vector3();
+
+  for(var other=0; other<models.length; other++){
+
+    if(models[other] != birdie){
+
+      var distance = models[other].position.distanceTo(birdie.position);
+      if(distance < min_dist){
+        var differnce = new THREE.Vector3();
+        differnce.subVectors(models[other].position, birdie.position);
+        repulse.sub(differnce);
+        // var diff = new THREE.Vector3();
+        // // c = c - (model[i].position - birdie.position)
+        // // c.subVectors(a - b) sets c to result of a - b
+        // var boid_pos = new THREE.Vector3();
+        // boid_pos.add(birdie.position);
+        // models[other].position.sub(boid_pos)
+        // diff.sub(models[other].position);
+        // repulse.subVectors(repulse, diff);
+        console.log("repulse!!")
+      }
+    }
+  }
+  return repulse;
+}
+
+const velo_num = 8;
+function matchVelocity(bird){
+  var perceived_velocity = new THREE.Vector3();
+  for(var iter=0; iter<models.length; iter++){
+    if(models[iter] != bird){
+      perceived_velocity.add(models[iter].userData.velocity);
+    }
+  }
+  perceived_velocity.divideScalar(models.length - 1);
+  var diff = new THREE.Vector3();
+  diff.subVectors(perceived_velocity, bird.userData.velocity);
+  diff.divideScalar(velo_num);
+  return diff;
+}
+
 function update() {
   //func for updating animations
   const delta = clock.getDelta();
@@ -427,9 +490,46 @@ function update() {
   if(models.length > 0){
     var exits = [];
 
-
     for(i=0; i<models.length; i++){
-      movement(models[i]);
+      // console.log("user data: ", models[i].userData);
+      /*
+      PSUEDOCODE
+      FOR EACH BOID b
+  			v1 = rule1(b)
+  			v2 = rule2(b)
+  			v3 = rule3(b)
+
+  			b.velocity = b.velocity + v1 + v2 + v3
+  			b.position = b.position + b.velocity
+		  END
+      */
+      var v1 = calcFlockCenter(models[i]);
+      models[i].userData.velocity.add(v1);
+
+      var v2 = repulseFromOthers(models[i]);
+      models[i].userData.velocity.add(v2);
+
+      var v3 = matchVelocity(models[i]);
+      models[i].userData.velocity.add(v3);
+
+      var vel = new THREE.Vector3();
+      vel.add(models[i].position);
+      vel.add(models[i].userData.velocity);
+      console.log(vel);
+      console.log(models[i].rotation);
+      models[i].lookAt(vel);
+      models[i].position.add(models[i].userData.velocity);
+      // console.log(update_position);
+
+      // next position calculated
+      // lookat next position
+      // move to next position
+
+      // model.velocity = model.velocity + v1 + v2 + v3;
+      // do a lookat, in here
+      // model.position = model.position + model.velocity;
+
+      // movement(models[i]);
 
       if( ! (frustum.intersectsObject(models[i])) ){
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
@@ -482,6 +582,9 @@ function movement(model) {
   model.rotateY(getRandomNum(-0.025, 0.025));
   model.rotateZ(getRandomNum(-0.025, 0.025));
   model.translateZ(2.5);
+
+
+
   /*
   // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
   // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
