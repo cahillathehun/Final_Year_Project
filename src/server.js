@@ -56,11 +56,14 @@ function checkRooms(socket, roomArray) {
 // auto-matchmaking logic
 
   if(!roomArray || !roomArray.length){
-    //if there is no room with space create a new one
-    room = createRoom();
-    joinRoom(socket, room);
-    return(null);
-
+    //if there is no room with space try to create a new one
+    if(r_list < 255){
+      room = createRoom();
+      joinRoom(socket, room);
+      return(null);
+    } else {
+      return(-1);
+    }
   } else {
     // if there is a room with a space, try to connect the client to it
     const room = free_rooms[0];
@@ -84,9 +87,13 @@ io.on("connection", function(socket) {
     socket.on("autoMatch", function(){
       // start the auto-matchmaking for the client
       var game_start_state = checkRooms(socket, free_rooms);
+
       var player_num = 0;
-      if (game_start_state){
-        player_num = 2
+      if(game_start_state = -1){
+        console.log("too many rooms! try again later");
+      }
+      else if (game_start_state){
+        player_num = 2;
 
         console.log("told room", game_start_state, "to start their game!")
         // tell client to clear screen and give them their player number
@@ -108,6 +115,8 @@ io.on("connection", function(socket) {
         var player_num = 1;
         // tell client to clear screen and give them their player number
         socket.emit("clearScreen",player_num);
+      } else {
+        console.log("too many rooms! Try again later.");
       }
     });
 
