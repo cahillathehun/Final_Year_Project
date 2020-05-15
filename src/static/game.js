@@ -436,7 +436,7 @@ function calcFlockCenter(boid){
   console.log("center calc done.");
 }
 
-const min_dist = 10;
+const min_dist = 30;
 function repulseFromOthers(birdie){
   var repulse = new THREE.Vector3();
 
@@ -446,17 +446,10 @@ function repulseFromOthers(birdie){
 
       var distance = models[other].position.distanceTo(birdie.position);
       if(distance < min_dist){
-        var differnce = new THREE.Vector3();
-        differnce.subVectors(models[other].position, birdie.position);
-        repulse.sub(differnce);
-        // var diff = new THREE.Vector3();
-        // // c = c - (model[i].position - birdie.position)
-        // // c.subVectors(a - b) sets c to result of a - b
-        // var boid_pos = new THREE.Vector3();
-        // boid_pos.add(birdie.position);
-        // models[other].position.sub(boid_pos)
-        // diff.sub(models[other].position);
-        // repulse.subVectors(repulse, diff);
+        var difference = new THREE.Vector3();
+        difference.subVectors(models[other].position, birdie.position);
+        difference.divideScalar(10);
+        repulse.sub(difference);
         console.log("repulse!!")
       }
     }
@@ -464,7 +457,7 @@ function repulseFromOthers(birdie){
   return repulse;
 }
 
-const velo_num = 8;
+const velo_num = 4;
 function matchVelocity(bird){
   var perceived_velocity = new THREE.Vector3();
   for(var iter=0; iter<models.length; iter++){
@@ -519,17 +512,6 @@ function update() {
       console.log(models[i].rotation);
       models[i].lookAt(vel);
       models[i].position.add(models[i].userData.velocity);
-      // console.log(update_position);
-
-      // next position calculated
-      // lookat next position
-      // move to next position
-
-      // model.velocity = model.velocity + v1 + v2 + v3;
-      // do a lookat, in here
-      // model.position = model.position + model.velocity;
-
-      // movement(models[i]);
 
       if( ! (frustum.intersectsObject(models[i])) ){
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
