@@ -78,14 +78,15 @@ function autoMatch(){
 }
 
 function createRoom(){
-  // create own room
+  // tell server you want to create your own room
   socket.emit("createRoom");
 }
 
 function sendChat(){
   // sends chat msgs
+  // TODO: do some checking of the string to make sure no html can be run/ protect against code injections
 
-  // following three lines prevent the page from being reloaded after submitting
+  // following three lines prevent the page from being reloaded after sending chat as that usually happens with forms
   var form = document.getElementById("myForm");
   function handleForm(event) { event.preventDefault(); }
   form.addEventListener("submit", handleForm);
@@ -134,23 +135,23 @@ function createRoomsList(rooms) {
 
   for(i=0; i<rooms.length; i++){
 
-    var rName = rooms[i][0];                      // get the room name
-    var noPlayers = rooms[i][1];                  // get number of players in the room
+    var r_name = rooms[i][0];                      // get the room name
+    var no_players = rooms[i][1];                  // get number of players in the room
 
 
     var graph = document.createElement("p");      // create paragraph element
-    var roomAndPlayers = name_string.concat(rName, space_string, players_string, noPlayers, space_string);  // concatenate all the strings
+    var roomAndPlayers = name_string.concat(r_name, space_string, players_string, no_players, space_string);  // concatenate all the strings
 
     // below adds the text to the div element
     var node = document.createTextNode(roomAndPlayers);
     graph.appendChild(node);
 
-    if(noPlayers == 1){
+    if(no_players == 1){
       // make join buttons for rooms with 1 player in it
       var btn = document.createElement("button");
       btn.setAttribute("onclick", "clientJoinRoom()");
       btn.setAttribute("class", "button buttonJoin");
-      btn.setAttribute("id", rName);
+      btn.setAttribute("id", r_name);
       btn.innerHTML = "Join Room";
       graph.appendChild(btn);
     }
@@ -183,7 +184,14 @@ function writeChat(msg){
   return;
 }
 
-function clearMain(elementID) {
+function writeTimer(time){
+  // func for writing amount of time left at top of screen
+
+  var timer_text = document.getElementById("timertext");
+  timer_text.innerHTML = time;
+}
+
+function clearMain(elementID){
   // func for clearing room list off screen
   var div = document.getElementById(elementID);
 
@@ -223,7 +231,7 @@ function handleOrientation(event) {
 }
 window.addEventListener("deviceorientation", handleOrientation, true);
 
-
+/*
 var client_x;
 var client_y;
 function mousemove(event){
@@ -268,7 +276,7 @@ as loading it locally is faster and more reliable
 
 */
 
-const mixers = []
+const mixers = []     //array of animations for each model
 const clock = new THREE.Clock();
 var frustum = new THREE.Frustum();
 
@@ -278,7 +286,7 @@ function createCamera() {
 
   camera.position.x = -50;
   camera.position.y = 50;
-  camera.position.z = 1200;
+  camera.position.z = 1150;
   camera.updateMatrix();
   camera.updateMatrixWorld();
   frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
@@ -290,10 +298,10 @@ function createLights() {
   const ambient_light = new THREE.AmbientLight( 0xcccccc );
   scene.add(ambient_light);
 
-  const directiona_light = new THREE.DirectionalLight( 0xffffff );
-  directiona_light.position.set( 0, 1, 1 ).normalize();
+  const directional_light = new THREE.DirectionalLight( 0xffffff );
+  directional_light.position.set( 0, 1, 1 ).normalize();
 
-  scene.add( directiona_light );
+  scene.add( directional_light );
 }
 
 function createRenderer() {
@@ -329,8 +337,8 @@ function onLoad(gltf, pos, rot, player) {
     obj.rotateY(rot._y);
     obj.rotateZ(rot._z);
   }
-  const animation = gltf.animations[0];
 
+  const animation = gltf.animations[0];
   const mixer = new THREE.AnimationMixer(obj);
   mixers.push(mixer);
 
@@ -435,13 +443,15 @@ function update() {
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
         const info = {
           position: {},
-          rotation: {}
+          rotation: {},
+          p_no: 0
         };
 
         info.position.x = (models[i].position.x * -1.0);
         info.position.y = (models[i].position.y * -1.0);
         info.position.z = (models[i].position.z * -1.0);
         info.rotation = models[i].rotation;
+        info.p_no = models[i].name;
 
         exits.push(info);
         models.splice(i, 1);
@@ -501,6 +511,7 @@ function movement(model) {
 }
 
 function endGame() {
+  // TODO: implement end game
   console.log("GAME OVER!");
 }
 
@@ -521,11 +532,27 @@ function scoreCalc(){
 /*
 MAIN FUNCTION
 */
+
+function startTimer(time){
+  /// TODO: can put score calculations in here
+  var t = setInterval(function() {
+    time = time - 1;
+    writeTimer(time);
+
+    if(time < 1){
+      clearInterval(t);
+      endGame();
+    }
+  }, 1000);
+}
+
 function init() {
   //setting up three.js scene
   container = document.querySelector('#scene-container');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xC5C5C4);
+  var game_length = 60;   // game length in seconds
+
 
   if(DEV == true){
     var stats = new Stats();
@@ -535,6 +562,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    document.getElementById("timeroverlay").style.display = "block";
+    startTimer(game_length);    // starts a setInterval func for the timer
 
 
     // TODO: maybe think about splitting this up into init() and startGame()?
@@ -544,8 +573,6 @@ function init() {
       stats.begin();
       update();
       render();
-      // scoreCalc();
-      // timerCalc();
       stats.end();
     });
 
@@ -555,6 +582,8 @@ function init() {
     createLights();
     initMods();
     createRenderer();
+    document.getElementById("timeroverlay").style.display = "block";
+    startTimer(game_length);      // starts a setInterval func for the timer
 
     // TODO: maybe think about splitting this up into init() and startGame()?
 
@@ -563,8 +592,6 @@ function init() {
 
       update();
       render();
-      // scoreCalc();
-      // timerCalc();
 
     });
   }
