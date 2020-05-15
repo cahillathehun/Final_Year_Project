@@ -30,133 +30,134 @@
 //
 // // script(src='/socket.io/socket.io.js')
 // // --------------------------------------------
-// const expect = require("chai");
-// const socket = require("socket.io");
-// const io     = require('socket.io-client');
-// var app = require('../../src/server');
-//
-// var socketUrl = 'http://localhost:80';
-//
-// var SocketTester = require('socket-tester');
-//
-// var options = {
-//     transports: ['websocket'],
-//     'force new connection': true,
-//     'forceNew': true
-//   };
-//
-// var socketTester = new SocketTester(io, socketUrl, options);
-// // var room = 'lobby';
-//
-//
-// const NODE_PORT = process.env.NODE_PORT || 80
-//
-// describe("Game test", () => {
-//     describe("Check autoMatch test", () => {
-//         it("should return a string confirming automatch", function(done) {
-//
-//             var client1 = {
-//                 on: {
-//                     'message': socketTester.shouldBeCalledNTimes(0)
-//                     // for some reason, assert in socket-tester cannot assert
-//                     // anything other than 0.
-//                     // May have to change the testing structure... again...
-//                 },
-//                 emit: {
-//                     'join room': 'room'
-//                 }
-//             };
-//
-//             var client2 = {
-//                 emit: {
-//                     // 'join room':room,
-//                     'message': socketTester.emitNTimes(2)
-//                 }
-//             };
-//
-//             socketTester.run([client1, client2], done);
-//
-//
-//         });
-//
-//         it("Operation should not be called", function(done) {
-//
-//             var client1 = {
-//                 on: {
-//                     'message': socketTester.shouldNotBeCalled()
-//                 },
-//                 emit: {
-//                     'join room': 'room'
-//                 }
-//             };
-//
-//             var client2 = {
-//                 emit: {
-//                     'join room':'room',
-//                     'message': 'test'
-//                 }
-//             };
-//
-//             socketTester.run([client1, client2], done);
-//
-//
-//         });
-//
-//         it("test calling with test message", function(done) {
-//         // set the client actions on recieving <event 'message'>
-//             var client1 = {
-//                 on: {
-//                     'message': socketTester.shouldBeCalledWith('test')
-//                 },
-//                 // what this should emit itself
-//                 emit: {
-//                     'join room': 'room'
-//                 }
-//             };
-//             // second mock client
-//             var client2 = {
-//                 emit: {
-//                     'join room':'room',
-//                     'message': 'test'
-//                 }
-//             };
-//
-//             socketTester.run([client1, client2], done);
-//
-//
-//         });
-// // copy from here
-//         it("test template here(Will always pass)", function(done) {
-//         // set the client actions on recieving <event 'message'>
-//             var client1 = {
-//                 on: {
-//                     'message': socketTester.shouldNotBeCalled()
-//                 },
-//                 // what this should emit itself
-//                 emit: {
-//                     'join room': 'room'
-//                 }
-//             };
-//             // second mock client
-//             var client2 = {
-//                 emit: {
-//                     'join room':'room',
-//                     'message': 'test'
-//                 }
-//             };
-//
-//             socketTester.run([client1, client2], done);
-//
-//
-//         });
-// //to here for test template
-//
-//
-//
-//
-//     });
-//
+const expect = require("chai");
+const socket = require("socket.io");
+const io     = require('socket.io-client');
+var app = require('../../src/server');
+
+var socketUrl = 'http://localhost:80';
+
+var SocketTester = require('socket-tester');
+
+var options = {
+    transports: ['websocket'],
+    'force new connection': true,
+    'forceNew': true
+  };
+
+var socketTester = new SocketTester(io, socketUrl, options);
+// var room = 'lobby';
+
+
+const NODE_PORT = process.env.NODE_PORT || 80
+
+describe("Game test", () => {
+    describe("Check autoMatch test", () => {
+        it("should return a string confirming automatch", function(done) {
+
+            var client1 = {
+                on: {
+                    'message': socketTester.shouldBeCalledNTimes(0)
+                    // for some reason, assert in socket-tester cannot assert
+                    // anything other than 0.
+                    // May have to change the testing structure... again...
+                },
+                emit: {
+                    'join room': 'room'
+                }
+            };
+
+            var client2 = {
+                emit: {
+                    // 'join room':room,
+                    'message': socketTester.emitNTimes(2)
+                }
+            };
+
+            socketTester.run([client1, client2], done);
+
+
+        });
+
+        it("Operation should not be called", function(done) {
+
+            var client1 = {
+                on: {
+                    'message': socketTester.shouldNotBeCalled()
+                },
+                emit: {
+                    'join room': 'room'
+                }
+            };
+
+            var client2 = {
+                emit: {
+                    'join room':'room',
+                    'message': 'test'
+                }
+            };
+
+            socketTester.run([client1, client2], done);
+
+
+        });
+
+        it("test calling with test message", function(done) {
+        // set the client actions on recieving <event 'message'>
+            var client1 = {
+                on: {
+                    // 'message': socketTester.shouldBeCalledWith('test')
+                    'message': socketTester.shouldNotBeCalled()
+                },
+                // what this should emit itself
+                emit: {
+                    'join room': 'room'
+                }
+            };
+            // second mock client
+            var client2 = {
+                emit: {
+                    'join room':'room',
+                    'message': 'test'
+                }
+            };
+
+            socketTester.run([client1, client2], done);
+
+
+        });
+// copy from here
+        it("test template here(Will always pass)", function(done) {
+        // set the client actions on recieving <event 'message'>
+            var client1 = {
+                on: {
+                    'message': socketTester.shouldNotBeCalled()
+                },
+                // what this should emit itself
+                emit: {
+                    'join room': 'room'
+                }
+            };
+            // second mock client
+            var client2 = {
+                emit: {
+                    'join room':'room',
+                    'message': 'test'
+                }
+            };
+
+            socketTester.run([client1, client2], done);
+
+
+        });
+//to here for test template
+
+
+
+
+    });
+
+});
+
+// ----------------------------------------------------
 // });
-//
-// // ----------------------------------------------------
-// // });
