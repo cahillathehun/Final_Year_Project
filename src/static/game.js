@@ -378,7 +378,7 @@ function addMods(mod_file, x, y, z, rotation, player, err, type){
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 10;
+  const init_mods_amt = 20;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
@@ -437,7 +437,7 @@ function addEntryMods(entry_mods) {
   }
 }
 
-const center_neighbour_dist = 110;
+const center_neighbour_dist = 90;
 function calcFlockCenter(boid){
   var flock_center = new THREE.Vector3();
   for(var b=0; b<models.length; b++){
@@ -467,7 +467,7 @@ function repulseFromOthers(birdie){
       if(distance < min_dist){
         var difference = new THREE.Vector3();
         difference.subVectors(models[other].position, birdie.position);
-        difference.divideScalar(20);
+        difference.divideScalar(60);    // the higher the number the smaller the distance repulsed but smoother transition
         repulse.sub(difference);
       }
     }
@@ -475,8 +475,8 @@ function repulseFromOthers(birdie){
   return repulse;
 }
 
-const velo_num = 20;
-const vel_neighbour_dist = 110;
+const velo_num = 12;
+const vel_neighbour_dist = 120;
 function matchVelocity(bird){
   var perceived_velocity = new THREE.Vector3();
   for(var iter=0; iter<models.length; iter++){
@@ -528,9 +528,12 @@ function update() {
       var new_pos = new THREE.Vector3();
       new_pos.add(models[i].position);
       new_pos.add(models[i].userData.velocity);
+      var line = new THREE.Line3(models[i].position, new_pos);
+      var look_point = new THREE.Vector3();
+      line.getCenter(look_point)
       // console.log(vel);
       // console.log(models[i].rotation);
-      models[i].lookAt(new_pos);
+      models[i].lookAt(look_point);
       models[i].position.add(models[i].userData.velocity);
 
       if( ! (frustum.intersectsObject(models[i])) ){
