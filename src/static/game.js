@@ -280,7 +280,6 @@ function createCamera() {
   camera.updateMatrix();
   camera.updateMatrixWorld();
   frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
-
 }
 
 function createLights() {
@@ -301,7 +300,6 @@ function createRenderer() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setClearColor( 0xC5C5C3 );
   document.body.appendChild( renderer.domElement );
-
 }
 
 const onProgress = () => {};
@@ -314,13 +312,35 @@ function onLoad(gltf, pos, rot, player, type) {
 
   obj.position.copy(pos);
 
+  // TODO: fix this so it doesn't completely fucking break with the new boids alg
+
   // color changing depending on player
   if(type == "init"){
     obj.name = player_num;
     obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
-  } else{
+  } else {
+    obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
+    
+    // calc entry's velocity & new pos
+    var vec1 = calcFlockCenter(obj);
+    obj.userData.velocity.add(vec1);
+
+    var vec2 = repulseFromOthers(obj);
+    obj.userData.velocity.add(vec2);
+
+    var vec3 = matchVelocity(obj);
+    obj.userData.velocity.add(vec3);
+
+    var new_pos = new THREE.Vector3();
+    new_pos.add(obj.position);
+    new_pos.add(obj.userData.velocity);
+    obj.lookAt(new_pos);
+    obj.position.add(obj.userData.velocity);
+
+    // give entry a player name tag
     obj.name = player;
   }
+
   if(obj.name == 1){
     obj.material.color.set(0x000099);
   } else {
@@ -342,6 +362,7 @@ function onLoad(gltf, pos, rot, player, type) {
   const action = mixer.clipAction(animation);
   action.play();
   models.push(obj);
+  console.log("LODR: ", models);
   scene.add(obj);
 }
 
@@ -357,7 +378,7 @@ function addMods(mod_file, x, y, z, rotation, player, err, type){
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 100;
+  const init_mods_amt = 3;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
@@ -371,6 +392,7 @@ function initMods() {
 
 
 function addEntryMods(entry_mods) {
+  // TODO: get this working with new boids
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
@@ -413,18 +435,16 @@ function addEntryMods(entry_mods) {
     var entry_no = entry_mods[i].p_no;
 
     addMods(glb, x, y, z, rots, entry_no, entryModsError, "add");
-
   }
 }
 
-const neighbour_dist = 30;
+const neighbour_dist = 45;
 function calcFlockCenter(boid){
   var flock_center = new THREE.Vector3();
   for(var b=0; b<models.length; b++){
     var center_dist = models[b].position.distanceTo(boid.position);
-    if(center_dist <=30){
+    if(center_dist < neighbour_dist){
       if(models[b] != boid){ flock_center.add(models[b].position) }
-
     }
   }
   flock_center.divideScalar(models.length - 1);
@@ -436,7 +456,7 @@ function calcFlockCenter(boid){
   console.log("center calc done.");
 }
 
-const min_dist = 30;
+const min_dist = 35;
 function repulseFromOthers(birdie){
   var repulse = new THREE.Vector3();
 
@@ -448,16 +468,15 @@ function repulseFromOthers(birdie){
       if(distance < min_dist){
         var difference = new THREE.Vector3();
         difference.subVectors(models[other].position, birdie.position);
-        difference.divideScalar(10);
+        difference.divideScalar(8);
         repulse.sub(difference);
-        console.log("repulse!!")
       }
     }
   }
   return repulse;
 }
 
-const velo_num = 4;
+const velo_num = 3;
 function matchVelocity(bird){
   var perceived_velocity = new THREE.Vector3();
   for(var iter=0; iter<models.length; iter++){
@@ -505,12 +524,12 @@ function update() {
       var v3 = matchVelocity(models[i]);
       models[i].userData.velocity.add(v3);
 
-      var vel = new THREE.Vector3();
-      vel.add(models[i].position);
-      vel.add(models[i].userData.velocity);
-      console.log(vel);
-      console.log(models[i].rotation);
-      models[i].lookAt(vel);
+      var new_pos = new THREE.Vector3();
+      new_pos.add(models[i].position);
+      new_pos.add(models[i].userData.velocity);
+      // console.log(vel);
+      // console.log(models[i].rotation);
+      models[i].lookAt(new_pos);
       models[i].position.add(models[i].userData.velocity);
 
       if( ! (frustum.intersectsObject(models[i])) ){
@@ -518,7 +537,8 @@ function update() {
         const info = {
           position: {},
           rotation: {},
-          p_no: 0
+          p_no: 0,
+          velo: {}
         };
 
         info.position.x = (models[i].position.x * -1.0);
@@ -555,37 +575,6 @@ function getRandomNum(min, max){
   return Math.random() * (max - min) + min;
 }
 
-
-// const y_axis_flip = new THREE.Vector3(0,1,0);
-function movement(model) {
-  // updates model position
-  // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.025, 0.025));
-  model.rotateY(getRandomNum(-0.025, 0.025));
-  model.rotateZ(getRandomNum(-0.025, 0.025));
-  model.translateZ(2.5);
-
-
-
-  /*
-  // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
-  // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
-  // TODO: learn more about quaternions. DONE!
-  // NOTE: did some research on quaternions but still cant get this to work consistently
-  // var curr_coords = model.getWorldPosition();
-  // var rotation;
-  // // console.log(curr_coords);
-  // if( (Math.abs(curr_coords.z) + 5) > 800){
-  //   // if going to go outside desired z coords change angle
-  //   rotation = model.rotation._y;
-  //   // model.setRotationFromAxisAngle(y_axis_flip, (180 + rotation));
-  //   model.rotateY(180 + (rotation*2));
-  //   model.translateZ(5);
-  // }
-  */
-
-  // console.log(model.getWorldPosition());
-}
 
 function endGame() {
   // TODO: implement end game
