@@ -172,5 +172,3 @@ io.on("connection", function(socket) {
       console.log("clients currently connected: ", clients);
     });
 });
-
-export default checkRooms;
