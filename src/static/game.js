@@ -320,7 +320,7 @@ function onLoad(gltf, pos, rot, player, type) {
     obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
   } else {
     obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
-    
+
     // calc entry's velocity & new pos
     var vec1 = calcFlockCenter(obj);
     obj.userData.velocity.add(vec1);
@@ -378,7 +378,7 @@ function addMods(mod_file, x, y, z, rotation, player, err, type){
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 3;
+  const init_mods_amt = 10;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
@@ -392,7 +392,6 @@ function initMods() {
 
 
 function addEntryMods(entry_mods) {
-  // TODO: get this working with new boids
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
@@ -422,11 +421,11 @@ function addEntryMods(entry_mods) {
       y-=5;
     }
     var z = entry_mods[i].position.z - 10;
-    if(y < 0){
+    if(z < 0){
       // attempt to fix dissapearing bird problem
-      y+=5;
+      z+=5;
     } else {
-      y-=5;
+      z-=5;
     }
 
 // just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
@@ -438,12 +437,12 @@ function addEntryMods(entry_mods) {
   }
 }
 
-const neighbour_dist = 45;
+const center_neighbour_dist = 110;
 function calcFlockCenter(boid){
   var flock_center = new THREE.Vector3();
   for(var b=0; b<models.length; b++){
     var center_dist = models[b].position.distanceTo(boid.position);
-    if(center_dist < neighbour_dist){
+    if(center_dist < center_neighbour_dist){
       if(models[b] != boid){ flock_center.add(models[b].position) }
     }
   }
@@ -456,7 +455,7 @@ function calcFlockCenter(boid){
   console.log("center calc done.");
 }
 
-const min_dist = 35;
+const min_dist = 60;
 function repulseFromOthers(birdie){
   var repulse = new THREE.Vector3();
 
@@ -468,7 +467,7 @@ function repulseFromOthers(birdie){
       if(distance < min_dist){
         var difference = new THREE.Vector3();
         difference.subVectors(models[other].position, birdie.position);
-        difference.divideScalar(8);
+        difference.divideScalar(20);
         repulse.sub(difference);
       }
     }
@@ -476,12 +475,14 @@ function repulseFromOthers(birdie){
   return repulse;
 }
 
-const velo_num = 3;
+const velo_num = 20;
+const vel_neighbour_dist = 110;
 function matchVelocity(bird){
   var perceived_velocity = new THREE.Vector3();
   for(var iter=0; iter<models.length; iter++){
-    if(models[iter] != bird){
-      perceived_velocity.add(models[iter].userData.velocity);
+    var vel_dist = models[iter].position.distanceTo(bird.position);
+    if(vel_dist < vel_neighbour_dist){
+      if(models[iter] != bird){ perceived_velocity.add(models[iter].userData.velocity); }
     }
   }
   perceived_velocity.divideScalar(models.length - 1);
