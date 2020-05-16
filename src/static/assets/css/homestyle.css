@@ -18,7 +18,7 @@ body {
   right: 0;
   bottom: 20px;
   background-color: rgba(0,0,0,0.5); /* Black with opacity */
-  z-index: 2;
+  z-index: 2; /* makes sure that it is brought to front of screen */
 }
 
 #chattext {
@@ -33,14 +33,21 @@ body {
   /* overlay going to be used for displaying time left at top of the screen */
   position: fixed;
   display: none;
-  width: 40px; /* Full width */
-  height: 40px;
+  width: 52px;
+  height: 52px;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 49%;
   background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-  z-index: 2;
-  cursor: pointer;
+  z-index: 2; /* makes sure that it is brought to front of screen */
+}
+
+#timertext {
+  /* format of timer text */
+  font-family: Arial;
+  text-align: center;
+  position: relative;
+  top: 12px;
+  color: white; /* white on black */
 }
 
 h1 {

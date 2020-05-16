@@ -45,8 +45,8 @@ socket.on("clearScreen", function(n) {
   clearMain("main");
   createStyle();
   createChat("main");
-  dispChatOverlay();
-  createTimer("timer");
+  document.getElementById("chatoverlay").style.display = "block";
+
   player_num = n;
   console.log("you are player: ", player_num);
 });
@@ -58,6 +58,7 @@ socket.on("startGame", function(rid) {
 });
 
 socket.on("chatMessage", function(msg){
+  // TODO: create checks to prevent code injection
   writeChat(msg);
 });
 
@@ -98,9 +99,9 @@ function sendChat(){
 }
 
 function clientJoinRoom() {
-  // join specific existing room with space
-  var rName = event.target.id;
-  socket.emit("clientJoin", rName);
+  // join specific existing room
+  var r_name = event.target.id;
+  socket.emit("clientJoin", r_name);
 }
 
 /*
@@ -170,18 +171,12 @@ function createChat(elementID){
   div.innerHTML = '<ul id="messages"></ul> <form id="myForm" action=""> <input style="float:left" placeholder="..."  id="chat_bar" autocomplete="off"/> <button style="float:right" onclick="sendChat(messages)">Send</button> </form>';
 }
 
-function dispChatOverlay(){
-  document.getElementById("chatoverlay").style.display = "block";
-}
-
 function writeChat(msg){
   // function to write chat msg to screen(html)
-  // TODO: finish writing chat feature
   // NOTE: do this using overlay
-
+// TODO: create checks to prevent against code injections
   var chat_text = document.getElementById("chattext");
   chat_text.innerHTML = msg;
-  return;
 }
 
 function writeTimer(time){
@@ -201,12 +196,7 @@ function clearMain(elementID){
 }
 
 
-function createTimer(elementID){
-  // NOTE: do this using overlay
-  var div = document.getElementById(elementID);
-  var game_length = 60;
-  div.innerHTML = '<p id="number" style="font-size: 60px">' + game_length.toString() + '</p>';
-}
+
 function scoreDisp(score) {
   // TODO: write function that displays score to each player
   // NOTE: do this using overlay
@@ -240,11 +230,11 @@ function mousemove(event){
   client_x = event.x;
   client_y = event.y;
 
-
   // console.log( `mouse x: ${client_x} | mouse y: ${client_y}`);
 }
 // NOTE: not needed
 // window.addEventListener("mousemove", mousemove, true);
+*/
 
 function onWindowResize() {
   // window resizing func
@@ -290,7 +280,6 @@ function createCamera() {
   camera.updateMatrix();
   camera.updateMatrixWorld();
   frustum.setFromProjectionMatrix( new THREE.Matrix4().multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse ) );
-
 }
 
 function createLights() {
@@ -311,25 +300,53 @@ function createRenderer() {
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setClearColor( 0xC5C5C3 );
   document.body.appendChild( renderer.domElement );
-
 }
 
 const onProgress = () => {};
 
 
 var models = []; // lists of models to be rendered
-function onLoad(gltf, pos, rot, player) {
+function onLoad(gltf, pos, rot, player, type) {
   // func adds models to scene & models array and also adds animation to mixer array
   var obj = gltf.scene.children[0];
 
+  obj.position.copy(pos);
+
+  // TODO: fix this so it doesn't completely fucking break with the new boids alg
+
   // color changing depending on player
-  if(player == 1){
+  if(type == "init"){
+    obj.name = player_num;
+    obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
+  } else {
+    obj.userData.velocity = new THREE.Vector3(0,0,0);   // add velocity property to boids
+
+    // calc entry's velocity & new pos
+    var vec1 = calcFlockCenter(obj);
+    obj.userData.velocity.add(vec1);
+
+    var vec2 = repulseFromOthers(obj);
+    obj.userData.velocity.add(vec2);
+
+    var vec3 = matchVelocity(obj);
+    obj.userData.velocity.add(vec3);
+
+    var new_pos = new THREE.Vector3();
+    new_pos.add(obj.position);
+    new_pos.add(obj.userData.velocity);
+    obj.lookAt(new_pos);
+    obj.position.add(obj.userData.velocity);
+
+    // give entry a player name tag
+    obj.name = player;
+  }
+
+  if(obj.name == 1){
     obj.material.color.set(0x000099);
   } else {
     obj.material.color.set(0x990000);
   }
 
-  obj.position.copy(pos);
 
   if(rot != false){
     // check if a certain rotation needs to be set
@@ -345,30 +362,30 @@ function onLoad(gltf, pos, rot, player) {
   const action = mixer.clipAction(animation);
   action.play();
   models.push(obj);
+  console.log("LODR: ", models);
   scene.add(obj);
 }
 
 
 
-function addMods(mod_file, x, y, z, rotation, player, err){
+function addMods(mod_file, x, y, z, rotation, player, err, type){
 // generic func for add models/objects
 
-  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player), onProgress, err);
+  lodr.load(mod_file, gltf => onLoad(gltf, new THREE.Vector3(x, y, z), rotation, player, type), onProgress, err);
   return;
 }
 
 const lodr = new THREE.GLTFLoader();
 function initMods() {
   // func for loading the initial set of .glb models & adding to three.js scene
-  const init_mods_amt = 3;
+  const init_mods_amt = 20;
   const initModsError = (errorMsg) => {console.error("init mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
   for(i=0; i<init_mods_amt; i++){
-    // only using parrot model for now
     var x = getRandomNum(-300, 300);
     var y = getRandomNum(-300, 300);
     var z = getRandomNum(-200, 300);
-    addMods(glb, x, y, z, false, player_num, initModsError);
+    addMods(glb, x, y, z, false, player_num, initModsError, "init");
   }
 }
 
@@ -378,11 +395,6 @@ function addEntryMods(entry_mods) {
   // function for adding new models to the Scene
   // should only be called by socketio emit condition "modelEntries" (when a bird crosses a boundary)
 
-  if(player_num == 1){
-    var entry_player_num =2;
-  } else {
-    var entry_player_num =1;
-  }
 
   const entryModsError = (errorMsg) => {console.error("entry mods ERR: ", errorMsg);};
   const glb = "/static/assets/models/Parrot.glb";
@@ -409,19 +421,75 @@ function addEntryMods(entry_mods) {
       y-=5;
     }
     var z = entry_mods[i].position.z - 10;
-    if(y < 0){
+    if(z < 0){
       // attempt to fix dissapearing bird problem
-      y+=5;
+      z+=5;
     } else {
-      y-=5;
+      z-=5;
     }
 
 // just keep same rotation, nearly ripped hair out trying to figure outwhich angle they should enter at. :/
     var rots = entry_mods[i].rotation;
 
-    addMods(glb, x, y, z, rots, entry_player_num, entryModsError);
+    var entry_no = entry_mods[i].p_no;
 
+    addMods(glb, x, y, z, rots, entry_no, entryModsError, "add");
   }
+}
+
+const center_neighbour_dist = 90;
+function calcFlockCenter(boid){
+  var flock_center = new THREE.Vector3();
+  for(var b=0; b<models.length; b++){
+    var center_dist = models[b].position.distanceTo(boid.position);
+    if(center_dist < center_neighbour_dist){
+      if(models[b] != boid){ flock_center.add(models[b].position) }
+    }
+  }
+  flock_center.divideScalar(models.length - 1);
+
+  flock_center.sub(boid.position);
+  flock_center.divideScalar(800);
+
+  return flock_center;
+  console.log("center calc done.");
+}
+
+const min_dist = 60;
+function repulseFromOthers(birdie){
+  var repulse = new THREE.Vector3();
+
+  for(var other=0; other<models.length; other++){
+
+    if(models[other] != birdie){
+
+      var distance = models[other].position.distanceTo(birdie.position);
+      if(distance < min_dist){
+        var difference = new THREE.Vector3();
+        difference.subVectors(models[other].position, birdie.position);
+        difference.divideScalar(60);    // the higher the number the smaller the distance repulsed but smoother transition
+        repulse.sub(difference);
+      }
+    }
+  }
+  return repulse;
+}
+
+const velo_num = 12;
+const vel_neighbour_dist = 120;
+function matchVelocity(bird){
+  var perceived_velocity = new THREE.Vector3();
+  for(var iter=0; iter<models.length; iter++){
+    var vel_dist = models[iter].position.distanceTo(bird.position);
+    if(vel_dist < vel_neighbour_dist){
+      if(models[iter] != bird){ perceived_velocity.add(models[iter].userData.velocity); }
+    }
+  }
+  perceived_velocity.divideScalar(models.length - 1);
+  var diff = new THREE.Vector3();
+  diff.subVectors(perceived_velocity, bird.userData.velocity);
+  diff.divideScalar(velo_num);
+  return diff;
 }
 
 function update() {
@@ -435,16 +503,46 @@ function update() {
   if(models.length > 0){
     var exits = [];
 
-
     for(i=0; i<models.length; i++){
-      movement(models[i]);
+      // console.log("user data: ", models[i].userData);
+      /*
+      PSUEDOCODE
+      FOR EACH BOID b
+  			v1 = rule1(b)
+  			v2 = rule2(b)
+  			v3 = rule3(b)
+
+  			b.velocity = b.velocity + v1 + v2 + v3
+  			b.position = b.position + b.velocity
+		  END
+      */
+      var v1 = calcFlockCenter(models[i]);
+      models[i].userData.velocity.add(v1);
+
+      var v2 = repulseFromOthers(models[i]);
+      models[i].userData.velocity.add(v2);
+
+      var v3 = matchVelocity(models[i]);
+      models[i].userData.velocity.add(v3);
+
+      var new_pos = new THREE.Vector3();
+      new_pos.add(models[i].position);
+      new_pos.add(models[i].userData.velocity);
+      var line = new THREE.Line3(models[i].position, new_pos);
+      var look_point = new THREE.Vector3();
+      line.getCenter(look_point)
+      // console.log(vel);
+      // console.log(models[i].rotation);
+      models[i].lookAt(look_point);
+      models[i].position.add(models[i].userData.velocity);
 
       if( ! (frustum.intersectsObject(models[i])) ){
         // TODO: this logic has to be updated to allow some leeway for models that have just been rendered. right now objects are being deleted from models[] when they shouldnt be, resulting in birds permanently disappearing over time.
         const info = {
           position: {},
           rotation: {},
-          p_no: 0
+          p_no: 0,
+          velo: {}
         };
 
         info.position.x = (models[i].position.x * -1.0);
@@ -482,34 +580,6 @@ function getRandomNum(min, max){
 }
 
 
-// const y_axis_flip = new THREE.Vector3(0,1,0);
-function movement(model) {
-  // updates model position
-  // TODO: write the boid logic here
-  model.rotateX(getRandomNum(-0.03, 0.03));
-  model.rotateY(getRandomNum(-0.03, 0.03));
-  model.rotateZ(getRandomNum(-0.03, 0.03));
-  model.translateZ(2.5);
-  /*
-  // NOTE: tried all different types of changing about the angles at which birds travel along z axis but couldnt get it to work smoothly or consistently.
-  // birds would be redirected in the way i want from one direction and just be fucked off randomly when approaching from another angle.
-  // TODO: learn more about quaternions. DONE!
-  // NOTE: did some research on quaternions but still cant get this to work consistently
-  // var curr_coords = model.getWorldPosition();
-  // var rotation;
-  // // console.log(curr_coords);
-  // if( (Math.abs(curr_coords.z) + 5) > 800){
-  //   // if going to go outside desired z coords change angle
-  //   rotation = model.rotation._y;
-  //   // model.setRotationFromAxisAngle(y_axis_flip, (180 + rotation));
-  //   model.rotateY(180 + (rotation*2));
-  //   model.translateZ(5);
-  // }
-  */
-
-  // console.log(model.getWorldPosition());
-}
-
 function endGame() {
   // TODO: implement end game
   console.log("GAME OVER!");
@@ -521,13 +591,7 @@ function scoreCalc(){
   player_score += models.length;
   scoreDisp(player_score);
 }
-//
-// function timerCalc(){
-//   // TODO: write timer function to time the game
-// // should this be tracked by server? to stop players editing js and setting their own score
-//   timerDisp(time);
-//   return false;
-// }
+
 
 /*
 MAIN FUNCTION

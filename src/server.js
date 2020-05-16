@@ -2,7 +2,6 @@
 /*
 DEPENDENCIES
 */
-// const uuid = require("uuid/v1")    // now depreciated
 const { v4: uuidv4 } = require('uuid');
 const express = require("express");
 const http = require("http");
@@ -57,11 +56,10 @@ function checkRooms(socket, roomArray) {
 // auto-matchmaking logic
 
   if(!roomArray || !roomArray.length){
-    //if there is no room with space create a new one
-    room = createRoom();
-    joinRoom(socket, room);
-    return(null);
-
+    //if there is no room with space try to create a new one
+      room = createRoom();
+      joinRoom(socket, room);
+      return(null);
   } else {
     // if there is a room with a space, try to connect the client to it
     const room = free_rooms[0];
@@ -86,33 +84,37 @@ io.on("connection", function(socket) {
       // start the auto-matchmaking for the client
 
       var game_start_state = checkRooms(socket, free_rooms);
+
       var player_num = 0;
       if (game_start_state){
-        player_num = 2
+        player_num = 2;
 
         console.log("told room", game_start_state, "to start their game!")
+        // tell client to clear screen and give them their player number
         socket.emit("clearScreen",player_num);
         io.to(game_start_state).emit("startGame", game_start_state);
       } else {
         player_num = 1;
-        // tell client to clear screen
+        // tell client to clear screen and give them their player number
         socket.emit("clearScreen",player_num);
       }
     });
 
     socket.on("createRoom", function() {
       // create a room and put this client into it
-      room = createRoom();
-      joinRoom(socket, room);
-      var player_num = 1;
-      // tell client to clear screen
-      socket.emit("clearScreen",player_num);
+        // put some limit on rooms to prevent spam
+        room = createRoom();
+        joinRoom(socket, room);
+        var player_num = 1;
+        // tell client to clear screen and give them their player number
+        socket.emit("clearScreen",player_num);
     });
 
     socket.on("clientJoin", function(room) {
       console.log("added client to room");
       joinRoom(socket, room);
-      var player_num = 1;
+      var player_num = 2;
+      // tell client to clear screen and give them their player number
       socket.emit("clearScreen",player_num);
       io.to(room).emit("startGame", room);
     });
@@ -167,7 +169,7 @@ io.on("connection", function(socket) {
 
     io.clients((error, clients) => {
       if(error) throw error;
-      console.log("clients: ", clients);
+      console.log("clients currently connected: ", clients);
     });
 });
 
