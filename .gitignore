@@ -12,5 +12,10 @@ build/
 # Do not store node modules in your repo.
 node_modules/
 
+package-lock.json
+
 # Ignore IntelliJ extra files
 .idea
+
+*.kdev4
+.kdev4

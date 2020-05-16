@@ -1,0 +1,24 @@
+image: node:latest
+
+stages:
+  - pre
+  - test # All items in this file are subject to change
+  - post
+
+pretest:
+  stage: pre
+  script:
+    - echo 'Tests are about to begin'
+
+build:
+  stage: test
+  script:
+    - npm install
+    - ls
+    - node ./node_modules/.bin/mocha --recursive --exit --require @babel/register 
+    # - npm run test
+
+post_test:
+  stage: post
+  script:
+    - echo 'Tests have finished'

@@ -82,6 +82,7 @@ io.on("connection", function(socket) {
 
     socket.on("autoMatch", function(){
       // start the auto-matchmaking for the client
+
       var game_start_state = checkRooms(socket, free_rooms);
 
       var player_num = 0;
@@ -128,6 +129,8 @@ io.on("connection", function(socket) {
 
       var display_rooms = [];
       var rooms = io.sockets.adapter.rooms;
+      var r;
+      var i;
       var r_length;
 
       // iterate through room list
@@ -169,3 +172,5 @@ io.on("connection", function(socket) {
       console.log("clients currently connected: ", clients);
     });
 });
+
+export default checkRooms;

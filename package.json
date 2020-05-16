@@ -5,29 +5,29 @@
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0",
-    "stats.js": "^0.17.0",
+    "stats-js": "^1.0.1",
     "three": "^0.112.1",
     "uuid": "^7.0.3"
   },
   "main": "server.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./node_modules/.bin/mocha --recursive --require @babel/register ",
+    "start": "nodemon --exec babel-node ./src/server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.computing.dcu.ie:cahila23/2020-ca400-cahila23-ocearbl2.git"
-  },
-  "keywords": [
-    "nodejs",
-    "multiplayer",
-    "socketio",
-    "websockets",
-    "boids"
-  ],
-  "author": "Alex Cahill & Liam Ó Cearbhaill",
-  "license": "ISC"
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
+    "jquery": "^3.5.1",
+    "jsdom": "^16.2.2",
+    "mocha": "^7.1.2",
+    "nodemon": "^2.0.2",
+    "sinon": "^9.0.2",
+    "socket-tester": "^1.2.1",
+    "socket.io-client": "^2.3.0",
+    "three-js": "^79.0.0"
+  }
 }
